@@ -123,3 +123,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .filter-none {
+    filter: none;
+  }
+  .filter-sepia {
+    filter: sepia(0.8) contrast(1.2);
+  }
+  .filter-bw {
+    filter: grayscale(1) contrast(1.1);
+  }
+  .filter-vintage {
+    filter: sepia(0.4) saturate(1.5) contrast(0.9) brightness(1.1);
+  }
+}
