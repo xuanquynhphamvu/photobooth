@@ -112,17 +112,13 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen max-w-7xl mx-auto overflow-hidden bg-white/50 backdrop-blur-sm shadow-xl rounded-xl border border-stone-200">
+    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen max-w-7xl mx-auto p-8 gap-12">
       
-      {/* Left Panel - Preview */}
-      <div className="w-full lg:w-3/5 p-8 bg-stone-50 flex flex-col items-center justify-center overflow-y-auto min-h-[50vh]">
-        <div className="mb-6 text-center lg:hidden">
-            <h2 className="text-2xl font-serif text-stone-900">Preview</h2>
-        </div>
-        
+      {/* Photo Preview */}
+      <div className="flex-shrink-0">
         <div 
           className={cn(
-              "grid gap-4 p-6 rounded-lg shadow-2xl transition-all duration-500 mx-auto",
+              "grid gap-4 p-6 rounded-lg shadow-2xl transition-all duration-500 mx-auto bg-stone-50",
               layout === 'strip' ? "grid-cols-1 w-[320px]" : "grid-cols-2 w-[480px]"
           )}
           style={{ backgroundColor }}
@@ -143,14 +139,12 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
         </div>
       </div>
 
-      {/* Right Panel - Controls */}
-      <div className="w-full lg:w-2/5 p-6 bg-white flex flex-col gap-6 overflow-y-auto border-l border-stone-100">
+      {/* Controls */}
+      <div className="w-full max-w-md flex flex-col gap-8 bg-white/80 backdrop-blur-sm p-8 rounded-xl border border-stone-200 shadow-xl">
         
-        <div>
-            <h3 className="text-lg font-serif font-medium text-stone-900 mb-3">
-                1. Select Photos <span className="text-stone-500 font-normal">({selectedPhotos.length}/{layout === 'strip' ? 3 : 4})</span>
-            </h3>
-            <div className="grid grid-cols-3 gap-2">
+        <div className="space-y-4">
+            <h3 className="font-serif text-lg text-stone-900 border-b border-stone-100 pb-2 text-center">𝄞⨾𓍢ִ໋⋆𝓈𝑒𝓁𝑒𝒸𝓉 𝓅𝒽𝑜𝓉𝑜𝓈 🎞️ 𖥔 ݁ ˖</h3>
+            <div className="grid grid-cols-4 gap-2">
                 {photos.map((photo, index) => {
                     const isSelected = selectedPhotos.includes(photo);
                     const selectedIndex = selectedPhotos.indexOf(photo) + 1;
@@ -160,8 +154,8 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                             key={index}
                             onClick={() => togglePhoto(photo)}
                             className={cn(
-                                "relative aspect-[4/3] rounded overflow-hidden transition-all duration-200",
-                                isSelected ? "ring-2 ring-stone-900 ring-offset-2 opacity-100" : "opacity-50 hover:opacity-80 grayscale"
+                                "relative aspect-[4/3] rounded overflow-hidden transition-all duration-200 ring-offset-2",
+                                isSelected ? "ring-2 ring-stone-900 opacity-100" : "opacity-40 hover:opacity-100 grayscale hover:grayscale-0"
                             )}
                         >
                             <img 
@@ -178,72 +172,66 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                     );
                 })}
             </div>
+            <p className="text-xs text-stone-500 font-serif italic text-right">
+                {selectedPhotos.length}/{defaultSelectionCount} selected
+            </p>
         </div>
 
-        <div className="h-px bg-stone-100" />
-
-        <div className="h-px bg-stone-100" />
-
-
-        <div>
-            <h3 className="text-lg font-serif font-medium text-stone-900 mb-3">3. Style</h3>
-            
-            <div className="space-y-4">
-                <div>
-                    <label className="text-sm text-stone-500 font-serif block mb-2">Filter</label>
-                    <div className="flex flex-wrap gap-2">
-                         {FILTERS.map((filter) => (
-                          <Button
-                            key={filter.id}
-                            variant={activeFilter === filter.id ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setActiveFilter(filter.id)}
-                            className={cn(
-                                "font-serif",
-                                activeFilter === filter.id ? "bg-stone-900" : "text-stone-600"
-                            )}
-                          >
-                            {filter.name}
-                          </Button>
-                        ))}
-                    </div>
+        <div className="space-y-6">
+            <div>
+                <h3 className="font-serif text-lg text-stone-900 border-b border-stone-100 pb-2 text-center">𝒻𝒾𝓁𝓉𝑒𝓇 🪄⊹₊⟡⋆</h3>
+                <div className="flex flex-wrap gap-2 justify-center py-4">
+                        {FILTERS.map((filter) => (
+                        <Button
+                        key={filter.id}
+                        variant={activeFilter === filter.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setActiveFilter(filter.id)}
+                        className={cn(
+                            "font-serif min-w-[3rem]",
+                            activeFilter === filter.id ? "bg-stone-900" : "text-stone-600 border-stone-200"
+                        )}
+                        >
+                        {filter.name}
+                        </Button>
+                    ))}
                 </div>
+            </div>
 
-                <div>
-                    <label className="text-sm text-stone-500 font-serif block mb-2">Background</label>
-                    <div className="flex flex-wrap gap-3">
-                        {BACKGROUND_COLORS.map((color) => (
-                            <button
-                                key={color.id}
-                                onClick={() => setBackgroundColor(color.value)}
-                                className={cn(
-                                    "w-8 h-8 rounded-full border-2 transition-all shadow-sm hover:scale-110",
-                                    backgroundColor === color.value ? "border-stone-900 scale-110" : "border-stone-200 hover:border-stone-300"
-                                )}
-                                style={{ backgroundColor: color.value }}
-                                title={color.label}
-                            />
-                        ))}
-                    </div>
+            <div>
+                <h3 className="font-serif text-lg text-stone-900 border-b border-stone-100 pb-2 text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊₊˚🌈˚🫧⊹♡</h3>
+                <div className="flex flex-wrap gap-3.5 justify-center py-4">
+                    {BACKGROUND_COLORS.map((color) => (
+                        <button
+                            key={color.id}
+                            onClick={() => setBackgroundColor(color.value)}
+                            className={cn(
+                                "w-8 h-8 rounded-full border-2 transition-all shadow-sm hover:scale-110",
+                                backgroundColor === color.value ? "border-stone-900 scale-110 ring-2 ring-stone-100 ring-offset-2" : "border-stone-200 hover:border-stone-300"
+                            )}
+                            style={{ backgroundColor: color.value }}
+                            title={color.label}
+                        />
+                    ))}
                 </div>
             </div>
         </div>
 
-        <div className="mt-auto pt-6 flex gap-3">
-             <Button 
+        <div className="mt-8 pt-6 border-t border-stone-100 flex gap-3">
+                <Button 
                 onClick={onRetake} 
                 variant="outline"
-                className="flex-1 font-serif border-stone-200 text-stone-600 hover:bg-stone-50"
+                className="btn-minimal px-8 py-7 text-lg"
                 disabled={isGenerating}
             >
-              Retake
+                ↩ 𝓇𝑒𝓉𝒶𝓀𝑒
             </Button>
             <Button 
                 onClick={handleSave} 
-                className="flex-[2] font-serif bg-stone-900 text-white hover:bg-stone-800"
+                className="btn-minimal px-10 py-7 text-lg"
                 disabled={isGenerating}
             >
-              {isGenerating ? "Processing..." : "Save & Download"}
+                {isGenerating ? "Processing..." : "‧₊˚ ☁️⋅ 𝓈𝒶𝓋𝑒 ♡🪐༘⋆"}
             </Button>
         </div>
       </div>
