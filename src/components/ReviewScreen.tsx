@@ -16,7 +16,6 @@ interface ReviewScreenProps {
 type FilterType = 'none' | 'sepia' | 'bw' | 'vintage';
 
 const FILTERS: { id: FilterType; name: string; class: string }[] = [
-  { id: 'none', name: 'Normal', class: 'filter-none' },
   { id: 'sepia', name: 'Sepia', class: 'filter-sepia' },
   { id: 'bw', name: 'B&W', class: 'filter-bw' },
   { id: 'vintage', name: 'Vintage', class: 'filter-vintage' },

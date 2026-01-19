@@ -38,6 +38,9 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
         const ctx = canvas.getContext("2d");
         if (!ctx) return null;
         
+        // Apply B&W filter
+        ctx.filter = "grayscale(1) contrast(1.1)";
+        
         // Flip horizontally to match mirrored video
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
@@ -95,7 +98,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
           autoPlay
           playsInline
           muted
-          className="w-full h-full object-cover transform -scale-x-100"
+          className="w-full h-full object-cover transform -scale-x-100 filter-bw"
         />
 
         <CountdownOverlay count={countdown} />
