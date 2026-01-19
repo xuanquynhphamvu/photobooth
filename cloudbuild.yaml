@@ -18,6 +18,18 @@ steps:
       - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mvp-photobooth:$COMMIT_SHA'
       - '--region'
       - 'asia-southeast1'
+
+  # Cleanup old images, keeping only the latest 3
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud artifacts docker images list asia-southeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mvp-photobooth \
+        --sort-by=~create_time \
+        --format="value(digest)" | \
+        tail -n +4 | \
+        xargs -I {} gcloud artifacts docker images delete asia-southeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mvp-photobooth@{} --delete-tags --quiet || true
 images:
   - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/mvp-photobooth:$COMMIT_SHA'
 options:
