@@ -61,6 +61,25 @@ describe('useCamera', () => {
     expect(result.current.isLoading).toBe(false);
   });
 
+  it('should handle missing mediaDevices API', async () => {
+    // Mock mediaDevices as undefined
+    Object.defineProperty(global.navigator, 'mediaDevices', {
+      value: undefined,
+      writable: true,
+    });
+
+    const { result } = renderHook(() => useCamera());
+
+    await act(async () => {
+      await result.current.startCamera();
+    });
+
+    expect(result.current.stream).toBeNull();
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toContain('Camera API not available');
+    expect(result.current.isLoading).toBe(false);
+  });
+
   it('should stop the camera stream', async () => {
     const mockTrack = { stop: vi.fn() };
     const mockStream = { getTracks: () => [mockTrack] } as unknown as MediaStream;

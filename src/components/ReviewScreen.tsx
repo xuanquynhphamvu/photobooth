@@ -25,6 +25,7 @@ const FILTERS: { id: FilterType; name: string; class: string }[] = [
 const BACKGROUND_COLORS = [
   { id: 'stone', value: '#f5f5f4', label: 'Stone' },
   { id: 'white', value: '#ffffff', label: 'White' },
+  { id: 'cream', value: '#e6dbc6', label: 'Cream' },
   { id: 'dark', value: '#745e59', label: 'Dark' },
   { id: 'pink', value: '#ffe4e6', label: 'Pink' },
   { id: 'mint', value: '#d1fae5', label: 'Mint' },
@@ -273,8 +274,8 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
             {/* Color Section */}
             <div className="border-b border-stone-100 pb-4">
-                <h3 className="font-serif text-lg text-[#745e59] text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊₊˚🌈˚🫧⊹♡</h3>
-                <div className="flex flex-wrap gap-3.5 justify-center py-2">
+                <h3 className="font-serif text-lg text-[#745e59] text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊˚˚🫧⊹♡</h3>
+                <div className="flex flex-wrap gap-3 justify-center py-2">
                     {BACKGROUND_COLORS.map((color) => (
                         <button
                             key={color.id}
@@ -292,7 +293,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
             {/* Note Section */}
             <div>
-                <h3 className="font-serif text-lg text-[#745e59] text-center">𝓃𝑜𝓉𝑒 ✎ ̼</h3>
+                <h3 className="font-serif text-lg text-[#745e59] text-center">𝓃𝑜𝓉𝑒 ✎𓂃.☘︎ ݁˖</h3>
                 <div className="py-2 flex justify-center">
                     <input
                         type="text"

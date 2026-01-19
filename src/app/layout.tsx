@@ -19,7 +19,7 @@ const vintage = Special_Elite({
 });
 
 export const metadata: Metadata = {
-  title: "MVP Photobooth",
+  title: "mel photobooth ✧°📷༘ ⋆.˚",
   description: "Vintage photobooth experience",
 };
 

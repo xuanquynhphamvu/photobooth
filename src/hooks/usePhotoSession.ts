@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useSound } from './useSound';
 
 export type SessionStatus = 'idle' | 'countdown' | 'capturing' | 'layout-selection' | 'review';
 
@@ -26,10 +27,12 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
   const [photos, setPhotos] = useState<string[]>([]);
   const [countdown, setCountdown] = useState(0);
   const photosCountRef = useRef(0);
+  const { playShutterSound } = useSound();
   
   const capturePhoto = useCallback(async () => {
     if (captureFn) {
         setStatus('capturing');
+        playShutterSound();
         try {
             const photo = await captureFn();
             if (photo) {
@@ -41,7 +44,7 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
             console.error("Capture failed", e);
         }
     }
-  }, [captureFn]);
+  }, [captureFn, playShutterSound]);
 
   const startCountdown = useCallback(() => {
      setStatus('countdown');

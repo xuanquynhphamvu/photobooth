@@ -19,6 +19,13 @@ export function useCamera(): UseCameraReturn {
     setIsLoading(true);
     setError(null);
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error(
+          'Camera API not available. This is likely because you are accessing the app over HTTP instead of HTTPS. ' +
+          'On mobile devices, camera access requires a secure context (HTTPS) or localhost.'
+        );
+      }
+
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user' },
         audio: false,

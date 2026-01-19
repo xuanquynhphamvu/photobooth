@@ -2,9 +2,18 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { usePhotoSession } from '../usePhotoSession';
 
+// Mock useSound
+const mockPlayShutterSound = vi.fn();
+vi.mock('../useSound', () => ({
+  useSound: () => ({
+    playShutterSound: mockPlayShutterSound
+  })
+}));
+
 describe('usePhotoSession', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    mockPlayShutterSound.mockClear();
   });
 
   afterEach(() => {
@@ -49,18 +58,19 @@ describe('usePhotoSession', () => {
      await act(async () => { vi.advanceTimersByTime(1000); });
      
      expect(captureFn).toHaveBeenCalledTimes(1);
+     expect(mockPlayShutterSound).toHaveBeenCalledTimes(1);
      expect(result.current.photos).toHaveLength(1);
   });
 
-  it('should complete session after 4 photos', async () => {
+  it('should complete session after 6 photos', async () => {
     const captureFn = vi.fn().mockResolvedValue('blob:test');
     const { result } = renderHook(() => usePhotoSession({ captureFn }));
 
     // Start session
     act(() => { result.current.startSession(); });
 
-    // Loop for 4 photos
-    for (let i = 1; i <= 4; i++) {
+    // Loop for 6 photos
+    for (let i = 1; i <= 6; i++) {
         // Run timer for countdown (3s) - needs to be step by step to trigger effect chains
         for(let j=0; j<3; j++) {
             await act(async () => { vi.advanceTimersByTime(1000); });
@@ -77,14 +87,13 @@ describe('usePhotoSession', () => {
         expect(result.current.photos).toHaveLength(i);
         
         // If not last photo, should be back in countdown or about to be
-        if (i < 4) {
+        if (i < 6) {
              // small advance to ensure state transition to next countdown if needed
              await act(async () => { vi.advanceTimersByTime(100); });
         }
     }
 
-    expect(result.current.photos).toHaveLength(4);
-    expect(result.current.status).toBe('review');
-    expect(result.current.status).toBe('review');
+    expect(result.current.photos).toHaveLength(6);
+    expect(result.current.status).toBe('layout-selection');
   });
 });
