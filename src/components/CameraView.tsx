@@ -25,9 +25,15 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
       capture: async () => {
         if (!videoRef.current) return null;
         
+        const video = videoRef.current;
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+            console.warn("CameraView: Video dimensions are 0");
+            return null;
+        }
+
         const canvas = document.createElement("canvas");
-        canvas.width = videoRef.current.videoWidth;
-        canvas.height = videoRef.current.videoHeight;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
         
         const ctx = canvas.getContext("2d");
         if (!ctx) return null;
@@ -36,7 +42,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
         
-        ctx.drawImage(videoRef.current, 0, 0);
+        ctx.drawImage(video, 0, 0);
         
         return canvas.toDataURL("image/jpeg");
       },
@@ -57,6 +63,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
     useEffect(() => {
       if (videoRef.current && stream) {
         videoRef.current.srcObject = stream;
+        videoRef.current.play().catch(e => console.error("CameraView: Auto-play failed", e));
       }
     }, [stream]);
 
