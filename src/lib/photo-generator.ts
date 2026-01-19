@@ -72,8 +72,8 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
   // Simple contrast check: if background is dark, use light text.
   // This is a naive heuristic (checking for black or dark hex/rgb would be better),
   // but for our presets we can just default to a smart choice or check specific values.
-  // For now, let's assume if it's black (#000000) we want white text.
-  const isDark = backgroundColor === '#000000' || backgroundColor === '#1c1917';
+  // For now, let's assume if it's black or the vintage dark (#745e59) we want white text.
+  const isDark = backgroundColor === '#000000' || backgroundColor === '#1c1917' || backgroundColor === '#745e59';
   
   ctx.fillStyle = isDark ? '#f5f5f4' : '#1c1917'; // stone-100 vs stone-900
   ctx.font = 'bold 48px "Playfair Display", serif';

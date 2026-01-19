@@ -83,7 +83,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
     }
 
     return (
-      <div className="relative w-full max-w-4xl mx-auto bg-black rounded-lg overflow-hidden shadow-2xl aspect-video group">
+      <div className="relative w-full max-w-4xl mx-auto bg-[#745e59] rounded-lg overflow-hidden shadow-2xl aspect-video group">
         {(!stream || isLoading) && (
           <div className="absolute inset-0 flex items-center justify-center text-white/50 font-serif">
             {isLoading ? "Requesting camera access..." : "Waiting for camera..."}
@@ -107,7 +107,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
              <Button 
                 onClick={onClose}
                 variant="ghost" 
-                className="text-white hover:bg-white/20 hover:text-white rounded-full bg-black/20 backdrop-blur-sm h-12 w-12 p-0"
+                className="text-white hover:bg-white/20 hover:text-white rounded-full bg-[#745e59]/20 backdrop-blur-sm h-12 w-12 p-0"
               >
                 ✕
               </Button>
@@ -118,7 +118,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
                  <Button
                     onClick={onStartSession}
                     size="lg"
-                    className="font-serif text-lg px-8 py-6 rounded-full bg-white text-black hover:bg-stone-200 shadow-xl"
+                    className="font-serif text-lg px-8 py-6 rounded-full bg-white text-[#745e59] hover:bg-stone-200 shadow-xl"
                  >
                     Take Photos
                  </Button>

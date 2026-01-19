@@ -25,7 +25,7 @@ const FILTERS: { id: FilterType; name: string; class: string }[] = [
 const BACKGROUND_COLORS = [
   { id: 'stone', value: '#f5f5f4', label: 'Stone' },
   { id: 'white', value: '#ffffff', label: 'White' },
-  { id: 'dark', value: '#1c1917', label: 'Dark' },
+  { id: 'dark', value: '#745e59', label: 'Dark' },
   { id: 'pink', value: '#ffe4e6', label: 'Pink' },
   { id: 'mint', value: '#d1fae5', label: 'Mint' },
   { id: 'blue', value: '#e0f2fe', label: 'Blue' },
@@ -143,7 +143,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
       <div className="w-full max-w-md flex flex-col gap-8 bg-white/80 backdrop-blur-sm p-8 rounded-xl border border-stone-200 shadow-xl">
         
         <div className="space-y-4">
-            <h3 className="font-serif text-lg text-stone-900 border-b border-stone-100 pb-2 text-center">𝄞⨾𓍢ִ໋⋆𝓈𝑒𝓁𝑒𝒸𝓉 𝓅𝒽𝑜𝓉𝑜𝓈 🎞️ 𖥔 ݁ ˖</h3>
+            <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-2 text-center">𝄞⨾𓍢ִ໋⋆𝓈𝑒𝓁𝑒𝒸𝓉 𝓅𝒽𝑜𝓉𝑜𝓈 🎞️ 𖥔 ݁ ˖</h3>
             <div className="grid grid-cols-4 gap-2">
                 {photos.map((photo, index) => {
                     const isSelected = selectedPhotos.includes(photo);
@@ -155,7 +155,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                             onClick={() => togglePhoto(photo)}
                             className={cn(
                                 "relative aspect-[4/3] rounded overflow-hidden transition-all duration-200 ring-offset-2",
-                                isSelected ? "ring-2 ring-stone-900 opacity-100" : "opacity-40 hover:opacity-100 grayscale hover:grayscale-0"
+                                isSelected ? "ring-2 ring-[#745e59] opacity-100" : "opacity-40 hover:opacity-100 grayscale hover:grayscale-0"
                             )}
                         >
                             <img 
@@ -164,7 +164,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                                 className="w-full h-full object-cover" 
                             />
                             {isSelected && (
-                                <div className="absolute top-1 right-1 w-5 h-5 bg-stone-900 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-sm">
+                                <div className="absolute top-1 right-1 w-5 h-5 bg-[#745e59] text-white rounded-full flex items-center justify-center text-xs font-bold shadow-sm">
                                     {selectedIndex}
                                 </div>
                             )}
@@ -179,7 +179,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
         <div className="space-y-6">
             <div>
-                <h3 className="font-serif text-lg text-stone-900 border-b border-stone-100 pb-2 text-center">𝒻𝒾𝓁𝓉𝑒𝓇 🪄⊹₊⟡⋆</h3>
+                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-2 text-center">𝒻𝒾𝓁𝓉𝑒𝓇 🪄⊹₊⟡⋆</h3>
                 <div className="flex flex-wrap gap-2 justify-center py-4">
                         {FILTERS.map((filter) => (
                         <Button
@@ -189,7 +189,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                         onClick={() => setActiveFilter(filter.id)}
                         className={cn(
                             "font-serif min-w-[3rem]",
-                            activeFilter === filter.id ? "bg-stone-900" : "text-stone-600 border-stone-200"
+                            activeFilter === filter.id ? "bg-[#745e59]" : "text-stone-600 border-stone-200"
                         )}
                         >
                         {filter.name}
@@ -199,7 +199,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             </div>
 
             <div>
-                <h3 className="font-serif text-lg text-stone-900 border-b border-stone-100 pb-2 text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊₊˚🌈˚🫧⊹♡</h3>
+                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-2 text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊₊˚🌈˚🫧⊹♡</h3>
                 <div className="flex flex-wrap gap-3.5 justify-center py-4">
                     {BACKGROUND_COLORS.map((color) => (
                         <button
@@ -207,7 +207,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                             onClick={() => setBackgroundColor(color.value)}
                             className={cn(
                                 "w-8 h-8 rounded-full border-2 transition-all shadow-sm hover:scale-110",
-                                backgroundColor === color.value ? "border-stone-900 scale-110 ring-2 ring-stone-100 ring-offset-2" : "border-stone-200 hover:border-stone-300"
+                                backgroundColor === color.value ? "border-[#745e59] scale-110 ring-2 ring-stone-100 ring-offset-2" : "border-stone-200 hover:border-stone-300"
                             )}
                             style={{ backgroundColor: color.value }}
                             title={color.label}
