@@ -3,13 +3,16 @@
 import { StartScreen } from "@/components/StartScreen";
 import { CameraView, CameraViewHandle } from "@/components/CameraView";
 import { ReviewScreen } from "@/components/ReviewScreen";
+import { LayoutSelectionScreen } from "@/components/LayoutSelectionScreen";
 import { UploadScreen } from "@/components/UploadScreen";
 import { useCamera } from "@/hooks/useCamera";
 import { usePhotoSession } from "@/hooks/usePhotoSession";
+import { LayoutType } from "@/lib/photo-generator";
 import { useState, useRef } from "react";
 
 export default function Home() {
-  const [view, setView] = useState<'start' | 'camera' | 'review' | 'upload'>('start');
+  const [view, setView] = useState<'start' | 'camera' | 'review' | 'upload' | 'layout'>('start');
+  const [selectedLayout, setSelectedLayout] = useState<LayoutType>('strip');
   const { stream, error, isLoading, startCamera, stopCamera } = useCamera();
   const cameraRef = useRef<CameraViewHandle>(null);
 
@@ -18,8 +21,8 @@ export default function Home() {
         return cameraRef.current?.capture() ?? null;
     },
     onFinish: () => {
-        console.log("Session finished");
-        setView('review');
+        console.log("Session finished, resizing to layout selection");
+        setView('layout');
         stopCamera();
     }
   });
@@ -53,6 +56,11 @@ export default function Home() {
 
   const handleUploadComplete = (uploadedPhotos: string[]) => {
     setPhotos(uploadedPhotos);
+    setView('layout');
+  };
+
+  const handleLayoutSelect = (layout: LayoutType) => {
+    setSelectedLayout(layout);
     setView('review');
   };
 
@@ -91,11 +99,16 @@ export default function Home() {
         />
       )}
 
+      {view === 'layout' && (
+        <LayoutSelectionScreen onSelectLayout={handleLayoutSelect} />
+      )}
+
       {view === 'review' && (
         <ReviewScreen 
             photos={photos}
             onRetake={handleRetake}
             onSave={handleSave}
+            initialLayout={selectedLayout}
         />
       )}
     </main>

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-export type SessionStatus = 'idle' | 'countdown' | 'capturing' | 'review';
+export type SessionStatus = 'idle' | 'countdown' | 'capturing' | 'layout-selection' | 'review';
 
 interface UsePhotoSessionProps {
   captureFn?: () => Promise<string | Blob | null>;
@@ -18,7 +18,7 @@ interface UsePhotoSessionReturn {
   resetSession: () => void;
 }
 
-const PHOTOS_PER_SESSION = 4;
+const PHOTOS_PER_SESSION = 6;
 const COUNTDOWN_SECONDS = 3;
 
 export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = {}): UsePhotoSessionReturn {
@@ -77,7 +77,7 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
                 if (photosCountRef.current < PHOTOS_PER_SESSION) {
                     startCountdown();
                 } else {
-                    setStatus('review');
+                    setStatus('layout-selection');
                     onFinish?.(photos);
                 }
             };

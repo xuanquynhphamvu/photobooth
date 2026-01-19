@@ -15,7 +15,7 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
   const bottomBannerHeight = 100;
   
   const cols = layout === 'grid' ? 2 : 1;
-  const rows = layout === 'grid' ? 2 : 4;
+  const rows = Math.ceil(photos.length / cols);
 
   // Calculate canvas size
   canvas.width = (photoWidth * cols) + (padding * (cols + 1));
