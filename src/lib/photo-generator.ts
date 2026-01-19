@@ -1,6 +1,6 @@
 export type LayoutType = 'grid' | 'strip';
 
-export async function generateCompositeImage(photos: string[], filter: FilterType, backgroundColor: string = '#f5f5f4', layout: LayoutType = 'strip'): Promise<string> {
+export async function generateCompositeImage(photos: string[], filter: FilterType, backgroundColor: string = '#f5f5f4', layout: LayoutType = 'strip', note?: string): Promise<string> {
   if (photos.length === 0) throw new Error("No photos to generate image from");
 
   // Create a canvas
@@ -84,7 +84,55 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
   const contentBottom = (photoHeight * rows) + (padding * (rows + 1));
   const bannerCenterY = contentBottom + (bottomBannerHeight / 2) - 10; 
 
-  ctx.fillText('Photobooth', centerX, bannerCenterY);
+  const titleText = note && note.trim().length > 0 ? note : null;
+  
+  if (titleText) {
+      ctx.fillText(titleText, centerX, bannerCenterY);
+  } else {
+      // Draw Logo
+      const logoPromise = new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = '/melphotobooth.svg';
+      });
+
+      try {
+          const logo = await logoPromise;
+          
+          // Calculate Logo Dimensions (maintain aspect ratio)
+          // Original ViewBox: 0 0 375 75 -> Ratio: 5:1
+          const logoHeight = 50; 
+          const logoWidth = logoHeight * (logo.width / logo.height) || logoHeight * 5; 
+          
+          const logoX = centerX - (logoWidth / 2);
+          const logoY = bannerCenterY - (logoHeight / 2);
+
+          // If dark background, invert logo to make it white (assuming logo is dark/brown)
+          if (isDark) {
+             ctx.filter = 'brightness(0) invert(1)';
+          }
+
+          // Add shadow
+          ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+          ctx.shadowBlur = 4;
+          ctx.shadowOffsetX = 2;
+          ctx.shadowOffsetY = 2;
+
+          ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight);
+          
+          // Reset shadow and filter
+          ctx.shadowColor = "transparent";
+          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.filter = 'none';
+      } catch (e) {
+          console.error("Failed to load logo", e);
+          // Fallback to text if logo fails
+          ctx.fillText('Photobooth', centerX, bannerCenterY);
+      }
+  }
   
   ctx.font = 'italic 24px "Playfair Display", serif';
   ctx.fillStyle = isDark ? '#a8a29e' : '#57534e'; // stone-400 vs stone-600

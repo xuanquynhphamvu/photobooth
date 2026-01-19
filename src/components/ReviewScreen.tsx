@@ -36,6 +36,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   const [activeFilter, setActiveFilter] = useState<FilterType>('none');
   const [backgroundColor, setBackgroundColor] = useState<string>(BACKGROUND_COLORS[0].value);
   const [layout] = useState<LayoutType>(initialLayout);
+  const [note, setNote] = useState<string>('');
   
   // Default selection based on layout
   const defaultSelectionCount = layout === 'strip' ? 3 : 4;
@@ -92,7 +93,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   const handleSave = async () => {
     setIsGenerating(true);
     try {
-        const dataUrl = await generateCompositeImage(selectedPhotos, activeFilter, backgroundColor, layout);
+        const dataUrl = await generateCompositeImage(selectedPhotos, activeFilter, backgroundColor, layout, note);
         
         const link = document.createElement('a');
         link.href = dataUrl;
@@ -117,32 +118,65 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
       <div className="flex-shrink-0">
         <div 
           className={cn(
-              "grid gap-4 p-6 rounded-lg shadow-2xl transition-all duration-500 mx-auto bg-stone-50",
-              layout === 'strip' ? "grid-cols-1 w-[320px]" : "grid-cols-2 w-[480px]"
+              "flex flex-col p-6 rounded-lg shadow-2xl transition-all duration-500 mx-auto bg-stone-50",
+              layout === 'strip' ? "w-[320px]" : "w-[480px]"
           )}
           style={{ backgroundColor }}
         >
-          {selectedPhotos.map((photo, index) => (
-            <div 
-              key={index} 
-              className="relative aspect-[4/3] overflow-hidden rounded bg-stone-100 animate-in fade-in zoom-in-95 duration-300 fill-mode-backwards"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <img 
-                src={photo} 
-                alt={`Selected Photo ${index + 1}`} 
-                className={cn("w-full h-full object-cover transition-all duration-300", filterClass)} 
-              />
-            </div>
-          ))}
+          <div className={cn(
+              "grid gap-4 mb-8",
+              layout === 'strip' ? "grid-cols-1" : "grid-cols-2"
+          )}>
+            {selectedPhotos.map((photo, index) => (
+                <div 
+                key={index} 
+                className="relative aspect-[4/3] overflow-hidden rounded bg-stone-100 animate-in fade-in zoom-in-95 duration-300 fill-mode-backwards"
+                style={{ animationDelay: `${index * 50}ms` }}
+                >
+                <img 
+                    src={photo} 
+                    alt={`Selected Photo ${index + 1}`} 
+                    className={cn("w-full h-full object-cover transition-all duration-300", filterClass)} 
+                />
+                </div>
+            ))}
+          </div>
+
+          {/* Footer Banner */}
+          <div className="flex flex-col items-center justify-center gap-2 pb-2">
+             {note && note.trim().length > 0 ? (
+                 <h2 className={cn(
+                     "font-serif text-3xl text-center font-bold",
+                     (backgroundColor === '#000000' || backgroundColor === '#1c1917' || backgroundColor === '#745e59') ? "text-stone-100" : "text-stone-900"
+                 )}>
+                     {note}
+                 </h2>
+             ) : (
+                 <img 
+                    src="/melphotobooth.svg" 
+                    alt="Mel Photobooth" 
+                    className={cn(
+                        "h-12 w-auto object-contain transition-all duration-300 drop-shadow-md",
+                        (backgroundColor === '#000000' || backgroundColor === '#1c1917' || backgroundColor === '#745e59') && "invert brightness-0"
+                    )}
+                 />
+             )}
+             
+             <p className={cn(
+                 "font-serif italic text-sm",
+                 (backgroundColor === '#000000' || backgroundColor === '#1c1917' || backgroundColor === '#745e59') ? "text-stone-400" : "text-stone-500"
+             )}>
+                 {new Date().toLocaleDateString()}
+             </p>
+          </div>
         </div>
       </div>
 
       {/* Controls */}
-      <div className="w-full max-w-md flex flex-col gap-8 bg-white/80 backdrop-blur-sm p-8 rounded-xl border border-stone-200 shadow-xl">
+      <div className="w-full max-w-md flex flex-col gap-4 bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-stone-200 shadow-xl">
         
-        <div className="space-y-4">
-            <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-2 text-center">𝄞⨾𓍢ִ໋⋆𝓈𝑒𝓁𝑒𝒸𝓉 𝓅𝒽𝑜𝓉𝑜𝓈 🎞️ 𖥔 ݁ ˖</h3>
+        <div className="space-y-2">
+            <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-1 text-center">𝄞⨾𓍢ִ໋⋆𝓈𝑒𝓁𝑒𝒸𝓉 𝓅𝒽𝑜𝓉𝑜𝓈 🎞️ 𖥔 ݁ ˖</h3>
             <div className="grid grid-cols-4 gap-2">
                 {photos.map((photo, index) => {
                     const isSelected = selectedPhotos.includes(photo);
@@ -176,10 +210,10 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-3">
             <div>
-                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-2 text-center">𝒻𝒾𝓁𝓉𝑒𝓇 🪄⊹₊⟡⋆</h3>
-                <div className="flex flex-wrap gap-2 justify-center py-4">
+                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-1 text-center">𝒻𝒾𝓁𝓉𝑒𝓇 🪄⊹₊⟡⋆</h3>
+                <div className="flex flex-wrap gap-2 justify-center py-2">
                         {FILTERS.map((filter) => (
                         <Button
                         key={filter.id}
@@ -198,8 +232,8 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             </div>
 
             <div>
-                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-2 text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊₊˚🌈˚🫧⊹♡</h3>
-                <div className="flex flex-wrap gap-3.5 justify-center py-4">
+                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-1 text-center">𝒸𝑜𝓁𝑜𝓇 ✩ ₊₊˚🌈˚🫧⊹♡</h3>
+                <div className="flex flex-wrap gap-3.5 justify-center py-2">
                     {BACKGROUND_COLORS.map((color) => (
                         <button
                             key={color.id}
@@ -214,9 +248,25 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                     ))}
                 </div>
             </div>
+
+
+            <div>
+                <h3 className="font-serif text-lg text-[#745e59] border-b border-stone-100 pb-1 text-center">𝓃𝑜𝓉𝑒 ✎ ̼</h3>
+                <div className="py-2">
+                    <input
+                        type="text"
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Enter a custom note..."
+                        maxLength={20}
+                        className="w-full text-center bg-transparent border-b-2 border-stone-200 focus:border-[#745e59] outline-none px-2 py-1 font-serif text-[#745e59] placeholder:text-stone-300 transition-colors"
+                    />
+                </div>
+            </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-stone-100 flex gap-3">
+
+        <div className="mt-4 pt-4 border-t border-stone-100 flex gap-3">
                 <Button 
                 onClick={onRetake} 
                 variant="outline"
