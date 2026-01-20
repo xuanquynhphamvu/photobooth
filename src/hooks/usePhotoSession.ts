@@ -28,15 +28,28 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
   const [photos, setPhotos] = useState<string[]>([]);
   const [countdown, setCountdown] = useState(0);
   const photosCountRef = useRef(0);
+  const isSessionActiveRef = useRef(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { playShutterSound } = useSound();
   
+  const clearTimer = () => {
+    if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+    }
+  };
+
   const capturePhoto = useCallback(async () => {
-    if (captureFn) {
+    if (captureFn && isSessionActiveRef.current) {
         setStatus('capturing');
         playShutterSound();
         try {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            if (!isSessionActiveRef.current) return;
+            
             const photo = await captureFn();
-            if (photo) {
+            if (photo && isSessionActiveRef.current) {
                 const photoUrl = typeof photo === 'string' ? photo : URL.createObjectURL(photo);
                 setPhotos(prev => [...prev, photoUrl]);
                 photosCountRef.current += 1;
@@ -48,24 +61,32 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
   }, [captureFn, playShutterSound]);
 
   const startCountdown = useCallback(() => {
+     if (!isSessionActiveRef.current) return;
      setStatus('countdown');
      setCountdown(COUNTDOWN_SECONDS);
   }, []);
 
   const startGetReady = useCallback(() => {
+    if (!isSessionActiveRef.current) return;
     setStatus('getting-ready');
-    setTimeout(() => {
-        startCountdown();
+    clearTimer();
+    timerRef.current = setTimeout(() => {
+        if (isSessionActiveRef.current) {
+            startCountdown();
+        }
     }, GET_READY_SECONDS * 1000);
   }, [startCountdown]);
 
   const startSession = useCallback(() => {
+    isSessionActiveRef.current = true;
     setPhotos([]);
     photosCountRef.current = 0;
     startGetReady();
   }, [startGetReady]);
 
   const resetSession = useCallback(() => {
+    isSessionActiveRef.current = false;
+    clearTimer();
     setStatus('idle');
     setPhotos([]);
     setCountdown(0);
@@ -73,30 +94,42 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
   }, []);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    // Cleanup on unmount
+    return () => {
+        isSessionActiveRef.current = false;
+        clearTimer();
+    };
+  }, []);
 
-    if (status === 'countdown') {
+  useEffect(() => {
+    let intervalTimer: NodeJS.Timeout;
+
+    if (status === 'countdown' && isSessionActiveRef.current) {
         if (countdown > 0) {
-            timer = setTimeout(() => {
-                setCountdown(prev => prev - 1);
+            intervalTimer = setTimeout(() => {
+                if (isSessionActiveRef.current) {
+                    setCountdown(prev => prev - 1);
+                }
             }, 1000);
         } else {
             // Countdown finished, capture!
             const performCaptureSequence = async () => {
                 await capturePhoto();
                 
-                if (photosCountRef.current < PHOTOS_PER_SESSION) {
-                    startGetReady();
-                } else {
-                    setStatus('layout-selection');
-                    onFinish?.(photos);
+                if (isSessionActiveRef.current) {
+                    if (photosCountRef.current < PHOTOS_PER_SESSION) {
+                        startGetReady();
+                    } else {
+                        setStatus('layout-selection');
+                        onFinish?.(photos);
+                    }
                 }
             };
             performCaptureSequence();
         }
     }
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(intervalTimer);
   }, [status, countdown, capturePhoto, startGetReady, onFinish, photos]);
 
   return { status, photos, setPhotos, countdown, startSession, resetSession };
