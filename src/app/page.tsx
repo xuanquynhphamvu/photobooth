@@ -69,7 +69,7 @@ export default function Home() {
   useOverflowControl(mainRef);
 
   return (
-    <main ref={mainRef} className="min-h-screen p-4 flex flex-col items-center justify-center">
+    <main ref={mainRef} className="min-h-[100dvh] p-4 flex flex-col items-center justify-center">
       {view === 'start' && (
         <StartScreen onUseCamera={handleUseCamera} onUpload={handleUpload} />
       )}

@@ -75,7 +75,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
 
     if (error) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 p-8 text-center bg-stone-50 rounded-lg border-2 border-stone-200">
+        <div className="flex flex-col items-center justify-center min-h-[60dvh] space-y-6 p-8 text-center bg-stone-50 rounded-lg border-2 border-stone-200">
           <div className="space-y-2">
             <h3 className="text-2xl font-serif text-stone-900">Camera Access Error</h3>
             <p className="text-stone-600">{error.message}</p>
@@ -110,7 +110,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
           <CountdownOverlay count={countdown} />
 
           {status === 'getting-ready' && (
-             <div className="absolute top-1/10 left-0 right-0 flex justify-center pointer-events-none z-30">
+             <div className="absolute top-[10%] left-0 right-0 flex justify-center pointer-events-none z-30">
                 <div className="bg-black/10 backdrop-blur-md text-white px-4 py-2 rounded-full font-serif text-md animate-in fade-in zoom-in-95 duration-300">
                     𝕘𝕖𝕥 𝕣𝕖𝕒𝕕𝕪 𝕗𝕠𝕣 {(photosTaken + 1) === 1 ? '𝕗𝕚𝕣𝕤𝕥' : (photosTaken + 1) === 2 ? '𝕤𝕖𝕔𝕠𝕟𝕕' : (photosTaken + 1) === 3 ? '𝕥𝕙𝕚𝕣𝕕' : (photosTaken + 1) === 4 ? '𝕗𝕠𝕦𝕣𝕥𝕙' : (photosTaken + 1) === 5 ? '𝕗𝕚𝕗𝕥𝕙' : (photosTaken + 1) === 6 ? '𝕝𝕒𝕤𝕥' : `${photosTaken + 1}`} 𝕡𝕙𝕠𝕥𝕠...
                 </div>

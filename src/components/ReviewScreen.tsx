@@ -127,14 +127,14 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   };
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen w-full max-w-7xl mx-auto p-4 md:p-8 gap-6 lg:gap-12">
+    <div className="flex flex-col lg:flex-row items-center justify-center min-h-[100dvh] w-full max-w-7xl mx-auto p-4 md:p-8 gap-6 lg:gap-12">
       
       {/* Photo Preview */}
       <div className="flex-shrink-0">
         <div 
           className={cn(
               "flex flex-col p-6 rounded-lg shadow-2xl transition-all duration-500 mx-auto bg-stone-50 max-w-full",
-              layout === 'strip' ? "w-full sm:w-[350px]" : "w-full md:w-[700px]"
+              layout === 'strip' ? "w-full max-w-[350px]" : "w-full max-w-[700px]"
           )}
           style={{ backgroundColor }}
         >
