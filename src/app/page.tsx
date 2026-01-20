@@ -9,6 +9,7 @@ import { useCamera } from "@/hooks/useCamera";
 import { usePhotoSession } from "@/hooks/usePhotoSession";
 import { LayoutType } from "@/lib/photo-generator";
 import { useState, useRef } from "react";
+import { useOverflowControl } from "@/hooks/useOverflowControl";
 
 export default function Home() {
   const [view, setView] = useState<'start' | 'camera' | 'review' | 'upload' | 'layout'>('start');
@@ -64,8 +65,11 @@ export default function Home() {
     setView('review');
   };
 
+  const mainRef = useRef<HTMLElement>(null);
+  useOverflowControl(mainRef);
+
   return (
-    <main className="min-h-screen p-4 flex items-center justify-center">
+    <main ref={mainRef} className="min-h-[100dvh] p-4 flex flex-col items-center justify-center">
       {view === 'start' && (
         <StartScreen onUseCamera={handleUseCamera} onUpload={handleUpload} />
       )}

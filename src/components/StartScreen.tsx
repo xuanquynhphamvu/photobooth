@@ -9,7 +9,7 @@ interface StartScreenProps {
 
 export function StartScreen({ onUseCamera, onUpload }: StartScreenProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] space-y-12 text-center p-8 max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
+    <div className="flex flex-col items-center justify-center min-h-[80dvh] space-y-12 text-center p-8 max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
       <div className="space-y-6">
         <img 
           src="/melphotobooth.svg" 

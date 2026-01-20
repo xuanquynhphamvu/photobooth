@@ -13,7 +13,7 @@ export function LayoutSelectionScreen({ onSelectLayout }: LayoutSelectionScreenP
           {/* Option 1: Photo Strip */}
           <button
             onClick={() => onSelectLayout('strip')}
-            className="group relative flex flex-col items-center gap-6 p-8 rounded-xl bg-white border-2 border-stone-200 hover:border-[#745e59] transition-all duration-300 hover:shadow-xl"
+            className="group relative flex flex-col items-center gap-4 md:gap-6 p-4 md:p-8 rounded-xl bg-white border-2 border-stone-200 hover:border-[#745e59] transition-all duration-300 hover:shadow-xl w-full"
           >
             <div className="w-32 bg-stone-100 p-2 shadow-inner rounded-sm group-hover:scale-105 transition-transform duration-300">
               <div className="flex flex-col gap-2">
@@ -30,7 +30,7 @@ export function LayoutSelectionScreen({ onSelectLayout }: LayoutSelectionScreenP
           {/* Option 2: 2x2 Grid */}
           <button
             onClick={() => onSelectLayout('grid')}
-            className="group relative flex flex-col items-center gap-6 p-8 rounded-xl bg-white border-2 border-stone-200 hover:border-[#745e59] transition-all duration-300 hover:shadow-xl"
+            className="group relative flex flex-col items-center gap-4 md:gap-6 p-4 md:p-8 rounded-xl bg-white border-2 border-stone-200 hover:border-[#745e59] transition-all duration-300 hover:shadow-xl w-full"
           >
              <div className="w-48 bg-stone-100 p-2 shadow-inner rounded-sm group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
               <div className="grid grid-cols-2 gap-2 w-full">

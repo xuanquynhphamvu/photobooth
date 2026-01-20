@@ -123,9 +123,13 @@
   body {
     @apply bg-background text-foreground;
     zoom: 1;
-    overflow: hidden;
-    height: 100vh;
-    @apply flex items-center justify-center; /* Center the zoomed content */
+    /* overflow: hidden; Removed to allow scrolling on mobile */
+    min-height: 100dvh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    /* @apply flex items-center justify-center; REMOVED: Managed by Main layout to avoid top-clipping on overflow */
   }
 }
 
