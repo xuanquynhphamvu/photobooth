@@ -122,6 +122,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    zoom: 1;
+    overflow: hidden;
+    height: 100vh;
+    @apply flex items-center justify-center; /* Center the zoomed content */
   }
 }
 

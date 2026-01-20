@@ -81,14 +81,10 @@ export default function Home() {
                 countdown={countdown}
                 isCapturing={status === 'capturing'}
                 onStartSession={startSession}
+                photosTaken={photos.length}
+                status={status}
             />
-            {photos.length > 0 && (
-                <div className="flex gap-2 justify-center">
-                    {photos.map((p, i) => (
-                        <img key={i} src={p} alt={`Captured photo ${i + 1}`} className="w-16 h-12 object-cover border border-white" />
-                    ))}
-                </div>
-            )}
+
         </div>
       )}
 

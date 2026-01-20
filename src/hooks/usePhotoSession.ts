@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useSound } from './useSound';
 
-export type SessionStatus = 'idle' | 'countdown' | 'capturing' | 'layout-selection' | 'review';
+export type SessionStatus = 'idle' | 'getting-ready' | 'countdown' | 'capturing' | 'layout-selection' | 'review';
 
 interface UsePhotoSessionProps {
   captureFn?: () => Promise<string | Blob | null>;
@@ -21,6 +21,7 @@ interface UsePhotoSessionReturn {
 
 const PHOTOS_PER_SESSION = 6;
 const COUNTDOWN_SECONDS = 3;
+const GET_READY_SECONDS = 2;
 
 export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = {}): UsePhotoSessionReturn {
   const [status, setStatus] = useState<SessionStatus>('idle');
@@ -51,11 +52,18 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
      setCountdown(COUNTDOWN_SECONDS);
   }, []);
 
+  const startGetReady = useCallback(() => {
+    setStatus('getting-ready');
+    setTimeout(() => {
+        startCountdown();
+    }, GET_READY_SECONDS * 1000);
+  }, [startCountdown]);
+
   const startSession = useCallback(() => {
     setPhotos([]);
     photosCountRef.current = 0;
-    startCountdown();
-  }, [startCountdown]);
+    startGetReady();
+  }, [startGetReady]);
 
   const resetSession = useCallback(() => {
     setStatus('idle');
@@ -78,7 +86,7 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
                 await capturePhoto();
                 
                 if (photosCountRef.current < PHOTOS_PER_SESSION) {
-                    startCountdown();
+                    startGetReady();
                 } else {
                     setStatus('layout-selection');
                     onFinish?.(photos);
@@ -89,7 +97,7 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
     }
 
     return () => clearTimeout(timer);
-  }, [status, countdown, capturePhoto, startCountdown, onFinish, photos]);
+  }, [status, countdown, capturePhoto, startGetReady, onFinish, photos]);
 
   return { status, photos, setPhotos, countdown, startSession, resetSession };
 }
