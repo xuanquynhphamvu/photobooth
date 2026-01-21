@@ -125,7 +125,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
           {status === 'getting-ready' && (
              <div className="absolute top-[10%] left-0 right-0 flex justify-center pointer-events-none z-30">
                 <div className="bg-black/10 backdrop-blur-md text-white px-4 py-2 rounded-full font-serif text-md animate-in fade-in zoom-in-95 duration-300">
-                    𝕘𝕖𝕥 𝕣𝕖𝕒𝕕𝕪 𝕗𝕠𝕣 {(photosTaken + 1) === 1 ? '𝕗𝕚𝕣𝕤𝕥' : (photosTaken + 1) === 2 ? '𝕤𝕖𝕔𝕠𝕟𝕕' : (photosTaken + 1) === 3 ? '𝕥𝕙𝕚𝕣𝕕' : (photosTaken + 1) === 4 ? '𝕗𝕠𝕦𝕣𝕥𝕙' : (photosTaken + 1) === 5 ? '𝕗𝕚𝕗𝕥𝕙' : (photosTaken + 1) === 6 ? '𝕝𝕒𝕤𝕥' : `${photosTaken + 1}`} 𝕡𝕙𝕠𝕥𝕠...
+                    𝕘𝕖𝕥 𝕣𝕖𝕒𝕕𝕪 𝕗𝕠𝕣 {(photosTaken + 1) === 1 ? '𝕗𝕚𝕣𝕤𝕥' : (photosTaken + 1) === 2 ? '𝕤𝕖𝕔𝕠𝕟𝕕' : (photosTaken + 1) === 3 ? '𝕥𝕙𝕚𝕣𝕕' : (photosTaken + 1) === 4 ? '𝕝𝕒𝕤𝕥' : `${photosTaken + 1}`} 𝕡𝕙𝕠𝕥𝕠...
                 </div>
              </div>
           )}
@@ -146,7 +146,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
 
              {status !== 'idle' && (
                <div className="flex justify-center gap-3 pb-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {Array.from({ length: 6 }).map((_, i) => (
+                  {Array.from({ length: 4 }).map((_, i) => (
                     <div
                       key={i}
                       className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${
@@ -173,7 +173,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
                 (｡ •̀  ᵕ 📷) ✨
               </Button>
               <p className="text-s text-stone-500 font-serif italic opacity-70">
-                * 𝕥𝕒𝕜𝕖 𝟞 𝕡𝕚𝕔𝕤 𝕒𝕥 𝕠𝕟𝕔𝕖 𝕨𝕚𝕥𝕙 𝕒 𝟛-𝕤𝕖𝕔 𝕔𝕠𝕦𝕟𝕥𝕕𝕠𝕨𝕟 𝕗𝕠𝕣 𝕖𝕒𝕔𝕙
+                * 𝕥𝕒𝕜𝕖 𝟜 𝕡𝕚𝕔𝕤 𝕒𝕥 𝕠𝕟𝕔𝕖 𝕨𝕚𝕥𝕙 𝕒 𝟛-𝕤𝕖𝕔 𝕔𝕠𝕦𝕟𝕥𝕕𝕠𝕨𝕟 𝕗𝕠𝕣 𝕖𝕒𝕔𝕙
               </p>
             </>
           )}

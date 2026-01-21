@@ -60,55 +60,13 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
     : PREVIEW_WIDTH_GRID / GRID_CANVAS_WIDTH;
   
   // Default selection based on layout
-  const defaultSelectionCount = layout === 'strip' ? 3 : 4;
-  const [selectedPhotos, setSelectedPhotos] = useState<string[]>(photos.slice(0, defaultSelectionCount));
+  const defaultSelectionCount = 4;
+  const [selectedPhotos] = useState<string[]>(photos.slice(0, defaultSelectionCount));
   const [isGenerating, setIsGenerating] = useState(false);
 
   const filterClass = FILTERS.find(f => f.id === activeFilter)?.class || 'filter-none';
 
-  const togglePhoto = (photo: string) => {
-    // Current limit based on layout
-    const maxPhotos = layout === 'strip' ? 3 : 4;
 
-    if (selectedPhotos.includes(photo)) {
-        // Prevent removing the last photo
-        if (selectedPhotos.length > 1) {
-            setSelectedPhotos(prev => prev.filter(p => p !== photo));
-        }
-    } else {
-        // Add photo logic
-        // If we are at max capacity, we need to remove one first? 
-        // Or just don't add? 
-        // Requirement said: "Review screen will default to the first 3 or 4 photos, and allow the user to swap them out."
-        // Let's implement swap mode: if full, replace the ... last one? or prevent adding?
-        // Let's prevent adding if full, showing a message or just simple replacement logic (remove first added? no that's confusing).
-        // User probably expects to deselect one then select another.
-        // But let's try auto-swap: if full, remove the one that is NOT the current one being toggled (obviously).
-        // Let's just implement: if (length >= maxPhotos) -> remove the first one from selectedPhotos then add new one.
-        
-        const newSelection = [...selectedPhotos];
-        if (newSelection.length >= maxPhotos) {
-             // Remove the first one from the selection (providing a FIFO-like feel for the selection slot)
-             newSelection.shift();
-        }
-
-        // Now insert the new photo maintaining original order
-        const originalIndex = photos.indexOf(photo);
-        
-        // Find correct insertion point among the REMAINING selection
-        let inserted = false;
-        for (let i = 0; i < newSelection.length; i++) {
-            if (photos.indexOf(newSelection[i]) > originalIndex) {
-                newSelection.splice(i, 0, photo);
-                inserted = true;
-                break;
-            }
-        }
-        if (!inserted) newSelection.push(photo);
-        
-        setSelectedPhotos(newSelection);
-    }
-  };
 
   const handleSave = async () => {
     setIsGenerating(true);
@@ -119,6 +77,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
         link.href = dataUrl;
         link.download = `photobooth-session-${Date.now()}.jpg`;
         document.body.appendChild(link);
+        link.click();
         document.body.removeChild(link);
         
         // Don't call onSave prop creates a reset (logout) effect. 
@@ -228,44 +187,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
         isPortrait ? "max-w-full p-4 gap-4" : "max-w-md p-6 gap-6"
       )}>
         
-        {/* Select Photos Section */}
-        <div className="space-y-1 border-b border-stone-100 pb-2 mb-1">
-            <h3 className={cn("font-serif text-[#745e59] text-center py-2", isPortrait ? "text-base" : "text-lg")}>
-              𝄞⨾𓍢ִ໋⋆𝓈𝑒𝓁𝑒𝒸𝓉 𝓅𝒽𝑜𝓉𝑜𝓈 🎞️ 𖥔 ݁ ˖
-            </h3>
-            <div className="grid grid-cols-3 gap-3">
-                {photos.map((photo, index) => {
-                    const isSelected = selectedPhotos.includes(photo);
-                    const selectedIndex = selectedPhotos.indexOf(photo) + 1;
-                    
-                    return (
-                        <button
-                            key={index}
-                            onClick={() => togglePhoto(photo)}
-                            className={cn(
-                                "relative rounded overflow-hidden transition-all duration-200 ring-offset-2",
-                                isPortrait ? "aspect-[3/4]" : "aspect-[4/3]",
-                                isSelected ? "ring-2 ring-[#745e59] opacity-100" : "opacity-40 hover:opacity-100 grayscale hover:grayscale-0"
-                            )}
-                        >
-                            <img 
-                                src={photo} 
-                                alt={`Capture ${index + 1}`} 
-                                className="w-full h-full object-cover" 
-                            />
-                            {isSelected && (
-                                <div className="absolute top-1 right-1 w-5 h-5 bg-[#745e59] text-white rounded-full flex items-center justify-center text-xs font-bold shadow-sm">
-                                    {selectedIndex}
-                                </div>
-                            )}
-                        </button>
-                    );
-                })}
-            </div>
-            <p className="text-xs text-stone-500 font-serif italic text-right">
-                {selectedPhotos.length}/{defaultSelectionCount} selected
-            </p>
-        </div>
+
 
         <div className="space-y-4">
             {/* Filter Section */}
@@ -326,23 +248,13 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
 
         <div className="mt-4 pt-4 border-t border-stone-100 flex flex-col gap-3">
-            <div className="flex gap-3 w-full">
-                <Button 
-                    onClick={onRetake} 
-                    variant="outline"
-                    className={cn("btn-minimal flex-1", isPortrait ? "py-5 text-base" : "py-7 text-lg")}
-                    disabled={isGenerating}
-                >
-                    ↩ 𝓇𝑒𝓉𝒶𝓀𝑒
-                </Button>
                 <Button 
                     onClick={handleSave} 
-                    className={cn("btn-minimal flex-1", isPortrait ? "py-5 text-base" : "py-7 text-lg")}
+                    className={cn("btn-minimal w-full", isPortrait ? "py-5 text-base" : "py-7 text-lg")}
                     disabled={isGenerating}
                 >
                     {isGenerating ? "Processing..." : "‧₊˚ ☁️⋅ 𝓈𝒶𝓋𝑒 ♡"}
                 </Button>
-            </div>
             
             <Button 
                 onClick={onRetake}
@@ -350,7 +262,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 className="w-full font-serif text-[#745e59] hover:bg-[#745e59]/10"
                 disabled={isGenerating}
             >
-                ✨ 𝓈𝓉𝒶𝓇𝓉 𝓃𝑒𝓌 𝓈𝑒𝓈𝓈𝒾𝑜𝓃 📸
+                ✨ 𝓇𝑒𝓉𝒶𝓀𝑒 𝑜𝓇 𝓈𝓉𝒶𝓇𝓉 𝓃𝑒𝓌 𝓈𝑒𝓈𝓈𝒾𝑜𝓃 📸
             </Button>
         </div>
       </div>

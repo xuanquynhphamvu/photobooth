@@ -19,9 +19,9 @@ interface UsePhotoSessionReturn {
   resetSession: () => void;
 }
 
-const PHOTOS_PER_SESSION = 6;
+const PHOTOS_PER_SESSION = 4;
 const COUNTDOWN_SECONDS = 3;
-const GET_READY_SECONDS = 2;
+const GET_READY_SECONDS = 1;
 
 export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = {}): UsePhotoSessionReturn {
   const [status, setStatus] = useState<SessionStatus>('idle');
