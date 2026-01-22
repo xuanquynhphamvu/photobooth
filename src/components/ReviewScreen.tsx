@@ -62,12 +62,12 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   const PREVIEW_SIZES = {
     printing: {
       strip: { 
-        portrait: { photo: 250, camera: 700 }, 
-        landscape: { photo: 200, camera: 700 } 
+        portrait: { photo: 300, camera: 700 }, 
+        landscape: { photo: 300, camera: 700 } 
       },
       grid: { 
-        portrait: { photo: 200, camera: 700 }, 
-        landscape: { photo: 200, camera: 700 } 
+        portrait: { photo: 330, camera: 700 }, 
+        landscape: { photo: 330, camera: 700 } 
       },
     },
     review: {
@@ -141,15 +141,15 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
       {/* Content Container */}
       <div className={cn(
           "flex flex-col transition-all duration-500 w-full items-center justify-center",
-          view === 'review' ? "lg:flex-row gap-6 lg:gap-12" : "gap-8"
+          view === 'review' ? "lg:flex-row gap-6 lg:gap-12" : "flex-1 relative" // Use flex-1 to fill the parent min-h-[100dvh]
       )}>
 
       <div className={cn(
           "flex-shrink-0 relative z-10 transition-all duration-500",
-          // ADJUST OVERALL SIZE HERE: Change 'scale-[0.6]' to 'scale-[0.8]' (bigger) or 'scale-[0.5]' (smaller)
-          // This scales BOTH the photo and the camera slot together.
-          // Added negative margins to pull buttons up into the empty space left by scaling
-          view === 'printing' ? "scale-[0.5] -mb-[500px] sm:scale-[0.6] sm:-mb-[400px] md:scale-[0.75] md:-mb-[200px] lg:scale-[0.9] lg:-mb-20 origin-top" : "" // responsive scaling
+          // ADJUST OVERALL SIZE HERE: Keep scale, but use Absolute Top Positioning for Printing Mode
+          view === 'printing' 
+            ? "absolute top-4 left-1/2 -translate-x-1/2 scale-[0.5] sm:scale-[0.6] md:scale-[0.75] lg:scale-[0.9] origin-top" 
+            : "scale-[0.6] sm:scale-[0.85] md:scale-100 origin-center" // Restoring responsiveness for Review Screen 
        )}>
         <div className="relative"> {/* Removed -mb-20 if it was causing issues, or keep if user wanted layout spacing. I will reset to just relative for clean slate if that's okay, or user can re-add. User said "it moves the photo... I want to adjust the line only". So I should probably remove the -mb-20 on the wrapper if I can, but I'll focus on the mask first. */}
             
@@ -172,7 +172,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 - This moves the photo DOWN only during printing animation.
                 - Settings screen stays at 0px.
             */}
-            <div className="relative z-40 overflow-hidden" style={{ transform: view === 'printing' ? 'translateY(340px)' : 'translateY(0px)' }}>
+            <div className="relative z-40 overflow-hidden" style={{ transform: view === 'printing' ? 'translateY(495px) translateX(5px)' : 'translateY(0px)' }}>
             <div 
             className={cn(
                 "flex flex-col shadow-2xl mx-auto bg-stone-50 relative",
@@ -370,11 +370,11 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
       {/* Controls: PRINTING / SUCCESS MODE (Only in Printing Mode) */}
       {view === 'printing' && (
-          <div className="flex flex-col gap-4 items-center animate-in fade-in duration-1000 delay-[3000ms] mt-8">
+          <div className="absolute bottom-10 left-0 right-0 flex flex-col gap-4 items-center animate-in fade-in duration-1000 delay-[3000ms]">
               <Button 
                   onClick={handleBackToSettings}
                   variant="outline"
-                  className="font-serif border-[#745e59] text-[#745e59] hover:bg-[#745e59]/10 px-8 py-6 text-lg rounded-full"
+                  className="font-serif border-[#745e59] text-[#745e59] hover:bg-[#745e59]/10 px-8 py-6 text-lg rounded-full shadow-lg bg-white/80"
               >
                   ← 𝐵𝒶𝒸𝓀 𝓉𝑜 𝓈𝑒𝓉𝓉𝒾𝓃𝑔𝓈
               </Button>
