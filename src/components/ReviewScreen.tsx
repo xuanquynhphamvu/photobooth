@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { LayoutType, generateCompositeImage } from "@/lib/photo-generator";
 import { LAYOUT_CONFIG, getFormattedDate } from "@/lib/layout-config";
+import { useResponsiveScale } from "@/hooks/useResponsiveScale";
 
 
 interface ReviewScreenProps {
@@ -35,6 +36,13 @@ const BACKGROUND_COLORS = [
   { id: 'purple', value: '#f3e8ff', label: 'Purple' },
 ];
 
+// === CONFIGURATION ===
+// Adjust this value (0.1 to 1.0) to change how big the camera/photo appears in Printing View
+const PRINTING_VIEW_WIDTH_PERCENTAGE = 0.8; 
+// Adjust this value to cap the maximum size (1.0 = actual pixel size, which is 700px wide)
+const PRINTING_VIEW_MAX_SCALE = 0.27; 
+
+
 
 export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: ReviewScreenProps) {
   const [isPortrait, setIsPortrait] = useState(false);
@@ -49,6 +57,10 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   const [backgroundColor, setBackgroundColor] = useState<string>(BACKGROUND_COLORS[0].value);
   const [layout] = useState<LayoutType>(initialLayout);
   const [note, setNote] = useState<string>('');
+  
+  // Dynamic scale for printing view (responsive to screen width)
+  // Target width 700px covers the camera slot width
+  const printingScale = useResponsiveScale(700, PRINTING_VIEW_WIDTH_PERCENTAGE, PRINTING_VIEW_MAX_SCALE);
   
   // Calculate scale for preview synchronization
 
@@ -146,11 +158,14 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
       <div className={cn(
           "flex-shrink-0 relative z-10 transition-all duration-500",
-          // ADJUST OVERALL SIZE HERE: Keep scale, but use Absolute Top Positioning for Printing Mode
+          /* Responsive Group Wrapper: Camera + Photo */
+          
           view === 'printing' 
-            ? "absolute top-4 left-1/2 -translate-x-1/2 scale-[0.5] sm:scale-[0.6] md:scale-[0.75] lg:scale-[0.9] origin-top" 
-            : "scale-[0.6] sm:scale-[0.85] md:scale-100 origin-center" // Restoring responsiveness for Review Screen 
-       )}>
+            ? "absolute top-10 left-1/2 origin-top" // Removed hardcoded scales, relying on dynamic scale below. Removed -translate-x-1/2 here to coordinate with transform style.
+            : "scale-[0.95] sm:scale-[0.85] md:scale-100 origin-center" // Keep Review Screen logic as is
+       )}
+       style={view === 'printing' ? { transform: `translateX(-50%) scale(${printingScale})` } : {}}
+       >
         <div className="relative"> {/* Removed -mb-20 if it was causing issues, or keep if user wanted layout spacing. I will reset to just relative for clean slate if that's okay, or user can re-add. User said "it moves the photo... I want to adjust the line only". So I should probably remove the -mb-20 on the wrapper if I can, but I'll focus on the mask first. */}
             
             {/* Printer Slot Image */}
