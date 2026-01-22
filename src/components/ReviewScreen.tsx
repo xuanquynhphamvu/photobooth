@@ -1,11 +1,11 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { LayoutType, generateCompositeImage } from "@/lib/photo-generator";
 import { LAYOUT_CONFIG, getFormattedDate } from "@/lib/layout-config";
-import { useOrientation } from "@/hooks/useOrientation";
+
 
 interface ReviewScreenProps {
   photos: string[];
@@ -37,7 +37,14 @@ const BACKGROUND_COLORS = [
 
 
 export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: ReviewScreenProps) {
-  const { isPortrait } = useOrientation();
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsPortrait(window.matchMedia("(orientation: portrait)").matches);
+    }
+  }, []);
+  const [view, setView] = useState<'review' | 'printing'>('review'); // Moved up for access in config
   const [activeFilter, setActiveFilter] = useState<FilterType>('none');
   const [backgroundColor, setBackgroundColor] = useState<string>(BACKGROUND_COLORS[0].value);
   const [layout] = useState<LayoutType>(initialLayout);
@@ -51,20 +58,46 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   const STRIP_CANVAS_WIDTH = photoWidth + (padding * 2);
   const GRID_CANVAS_WIDTH = (photoWidth * 2) + (padding * 3);
   
-  // Adjust preview container widths for mobile/portrait
-  const PREVIEW_WIDTH_STRIP = isPortrait ? 300 : 350;
-  const PREVIEW_WIDTH_GRID = isPortrait ? 350 : 700;
+  // === ADJUST SIZES HERE for Photo Ratio & Camera Fit ===
+  const PREVIEW_SIZES = {
+    printing: {
+      strip: { 
+        portrait: { photo: 250, camera: 700 }, 
+        landscape: { photo: 200, camera: 700 } 
+      },
+      grid: { 
+        portrait: { photo: 200, camera: 700 }, 
+        landscape: { photo: 200, camera: 700 } 
+      },
+    },
+    review: {
+      strip: { 
+        portrait: { photo: 150, camera: 0 }, 
+        landscape: { photo: 350, camera: 0 } 
+      },
+      grid: { 
+        portrait: { photo: 370, camera: 0 }, 
+        landscape: { photo: 700, camera: 0 } 
+      },
+    }
+  };
 
-  const scale = layout === 'strip' 
-    ? PREVIEW_WIDTH_STRIP / STRIP_CANVAS_WIDTH 
-    : PREVIEW_WIDTH_GRID / GRID_CANVAS_WIDTH;
+  const currentModeSizes = view === 'printing' ? PREVIEW_SIZES.printing : PREVIEW_SIZES.review;
+  const currentLayoutSizes = layout === 'strip' ? currentModeSizes.strip : currentModeSizes.grid;
+  const currentOrientationSizes = isPortrait ? currentLayoutSizes.portrait : currentLayoutSizes.landscape;
+  
+  const targetWidth = currentOrientationSizes.photo;
+  const targetCameraWidth = currentOrientationSizes.camera;
+
+  const CANVAS_WIDTH = layout === 'strip' ? STRIP_CANVAS_WIDTH : GRID_CANVAS_WIDTH;
+  const scale = targetWidth / CANVAS_WIDTH;
   
   // Default selection based on layout
   const defaultSelectionCount = 4;
   const [selectedPhotos] = useState<string[]>(photos.slice(0, defaultSelectionCount));
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const [view, setView] = useState<'review' | 'printing'>('review');
+
 
   const filterClass = FILTERS.find(f => f.id === activeFilter)?.class || 'filter-none';
 
@@ -81,7 +114,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
         document.body.removeChild(link);
     } catch (e) {
         console.error("Failed to generate image", e);
-        alert("Failed to save photo. Please try again.");
+        alert(`Failed to save photo: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
         setIsGenerating(false);
     }
@@ -113,52 +146,71 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
       <div className={cn(
           "flex-shrink-0 relative z-10 transition-all duration-500",
-          view === 'printing' ? "scale-[0.6] origin-top mb-10 md:mb-20" : "" // Can add scale effect if needed
+          // ADJUST OVERALL SIZE HERE: Change 'scale-[0.6]' to 'scale-[0.8]' (bigger) or 'scale-[0.5]' (smaller)
+          // This scales BOTH the photo and the camera slot together.
+          // Added negative margins to pull buttons up into the empty space left by scaling
+          view === 'printing' ? "scale-[0.5] -mb-[500px] sm:scale-[0.6] sm:-mb-[400px] md:scale-[0.75] md:-mb-[200px] lg:scale-[0.9] lg:-mb-20 origin-top" : "" // responsive scaling
        )}>
-        <div className="relative">
-            {/* Cover masking the area above the slot */}
-            <div className={cn(
-                "absolute left-1/2 -translate-x-1/2 w-[150vw] h-[100vh] bg-background pointer-events-none",
-                "bottom-full z-20"
-            )} />
-
-            {/* Printer Slot */}
-            {/* Printer Slot Line - Invisible */}
-            {/* <div className="hidden" /> */}
+        <div className="relative"> {/* Removed -mb-20 if it was causing issues, or keep if user wanted layout spacing. I will reset to just relative for clean slate if that's okay, or user can re-add. User said "it moves the photo... I want to adjust the line only". So I should probably remove the -mb-20 on the wrapper if I can, but I'll focus on the mask first. */}
             
-            {/* The slot image is removed as requested "create a line" */}
+            {/* Printer Slot Image */}
+            <div className={cn(
+                "absolute left-1/2 -translate-x-1/2 z-30 transition-opacity duration-500",
+                // ADJUST SLOT POSITION: Change '-top-12' to move the camera image up/down
+                "-top-12", 
+                "h-auto", // Width is now controlled by config below
+                view === 'printing' ? "opacity-100" : "opacity-0 pointer-events-none"
+            )}
+            style={{ width: targetCameraWidth }}
+            >
+               <img src="/camera-slot.png" alt="Camera Slot" className="w-full h-auto drop-shadow-2xl" />
+            </div>
 
+            {/* 
+                ADJUST STARTING LINE POSITION (Printing Only):
+                - Change '340px' inside the ternary operator below.
+                - This moves the photo DOWN only during printing animation.
+                - Settings screen stays at 0px.
+            */}
+            <div className="relative z-40 overflow-hidden" style={{ transform: view === 'printing' ? 'translateY(340px)' : 'translateY(0px)' }}>
             <div 
             className={cn(
-                "flex flex-col p-6 rounded-lg shadow-2xl mx-auto bg-stone-50 max-w-full relative z-10",
-                layout === 'strip' ? 
-                    (isPortrait ? "w-full max-w-[320px]" : "w-full max-w-[350px]") : 
-                    (isPortrait ? "w-full max-w-[370px]" : "w-full max-w-[700px]"),
-                
+                "flex flex-col shadow-2xl mx-auto bg-stone-50 relative",
                 // Animation Logic
                 view === 'printing' 
                     ? "animate-print-slide"
                     : ""
             )}
             style={{ 
+                width: targetWidth, // Controlled by PREVIEW_SIZES config
+                padding: padding * scale, // Dynamic padding to match generator
+                borderRadius: 12 * scale, // Optional: Scale border radius too
                 backgroundColor,
+                transformOrigin: 'top center',
                 transition: view === 'printing' ? 'none' : 'transform 0.5s'
             }}
             >
-            <div className={cn(
-                "grid gap-4 mb-2",
-                layout === 'strip' ? "grid-cols-1" : "grid-cols-2"
-            )}>
+
+            <div 
+                className={cn(
+                    "grid mb-0", // Removed mb-2
+                    layout === 'strip' ? "grid-cols-1" : "grid-cols-2"
+                )}
+                style={{ gap: padding * scale }} // Generator uses padding as gap
+            >
                 {selectedPhotos.map((photo, index) => (
                     <div 
                     key={index} 
                     className={cn(
-                        "relative overflow-hidden rounded bg-stone-100",
+                        "relative overflow-hidden bg-stone-100",
                         // Only animate fade in on initial review, not re-render during print
                         view === 'review' ? "animate-in fade-in zoom-in-95 duration-300 fill-mode-backwards" : "",
                         isPortrait ? "aspect-[3/4]" : "aspect-[4/3]"
                     )}
-                    style={{ animationDelay: view === 'review' ? `${index * 50}ms` : '0ms' }}
+                    style={{ 
+                        animationDelay: view === 'review' ? `${index * 50}ms` : '0ms',
+                        borderRadius: 4 * scale // Scale internal radius
+                    }}
                     >
                     <img 
                         src={photo} 
@@ -219,6 +271,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 >
                     {getFormattedDate()}
                 </p>
+            </div>
             </div>
             </div>
             
