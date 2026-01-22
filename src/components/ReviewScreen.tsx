@@ -320,8 +320,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             {/* Home / New Session Button (Top Left) */}
             <Button 
                 onClick={onRetake}
-                variant="outline"
-                className="fixed top-6 left-6 z-50 w-12 h-12 rounded-full border-[#745e59] text-[#745e59] bg-white/80 backdrop-blur-sm shadow-lg p-0 hover:scale-105 transition-all"
+                className="fixed top-6 left-6 z-50 w-14 h-14 rounded-full shadow-xl bg-white text-[#745e59] hover:bg-[#745e59]/10 transition-all duration-300"
             >
                 <ArrowLeft className="w-6 h-6" />
             </Button>
@@ -435,8 +434,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             {/* Back Button (Top Left) */}
             <Button 
                 onClick={handleBackToSettings}
-                variant="outline"
-                className="fixed top-6 left-6 z-50 w-12 h-12 rounded-full border-[#745e59] text-[#745e59] bg-white/80 backdrop-blur-sm shadow-lg p-0 animate-in fade-in duration-1000 delay-[3000ms] hover:scale-105 transition-all"
+                className="fixed top-6 left-6 z-50 w-14 h-14 rounded-full shadow-xl bg-white text-[#745e59] hover:bg-[#745e59]/10 transition-all duration-300 animate-in fade-in duration-1000 delay-[3000ms]"
             >
                 <ArrowLeft className="w-6 h-6" />
             </Button>
@@ -444,8 +442,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             {/* Start New Session Button (Bottom Right) */}
             <Button 
                 onClick={onRetake}
-                variant="outline"
-                className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full border-[#745e59] text-[#745e59] bg-white/80 backdrop-blur-sm shadow-lg p-0 animate-in fade-in duration-1000 delay-[3000ms] hover:scale-105 transition-all"
+                className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl bg-white text-[#745e59] hover:bg-[#745e59]/10 transition-all duration-300 animate-in fade-in duration-1000 delay-[3000ms]"
             >
                 <Home className="w-6 h-6" />
             </Button>
