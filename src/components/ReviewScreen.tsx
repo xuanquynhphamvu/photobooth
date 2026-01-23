@@ -320,7 +320,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             {/* Home / New Session Button (Top Left) */}
             <Button 
                 onClick={onRetake}
-                className="fixed top-6 left-6 z-50 w-14 h-14 rounded-full shadow-xl bg-white text-[#745e59] hover:bg-[#745e59]/10 transition-all duration-300"
+                className="btn-minimal fixed top-6 left-6 z-50 w-14 h-14 flex items-center justify-center p-0"
             >
                 <ArrowLeft className="w-6 h-6" />
             </Button>
@@ -335,21 +335,16 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                     showSettings ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4 pointer-events-none"
                 )}>
                     <div className={cn(
-                        "w-full max-w-sm flex flex-col bg-white/90 backdrop-blur-md rounded-2xl border border-stone-200 shadow-2xl p-6 gap-6",
+                        "w-full max-w-sm flex flex-col bg-white/90 backdrop-blur-md rounded-2xl border border-stone-200 shadow-2xl p-6 gap-2",
                     )}>
-                        <div className="flex items-center justify-between border-b border-stone-100 pb-2">
-                             <h3 className="font-serif text-[#745e59] text-lg">𝒞𝓊𝓈𝓉𝑜𝓂𝒾𝓏𝑒</h3>
-                             {/* Mobile Close Button */}
-                             <Button variant="ghost" size="icon" className="h-6 w-6 md:hidden" onClick={() => setShowSettings(false)}>
-                                <X className="h-4 w-4" />
-                             </Button>
+                        <div className="flex items-center justify-center border-b border-stone-100 pb-2">
+                             <h3 className="font-serif text-[#745e59] text-lg font-medium tracking-wide">⋆⭒˚.⋆ 𝒸𝓊𝓈𝓉𝑜𝓂𝒾𝓏𝑒 🪐 ⋆⭒˚</h3>
                         </div>
-
-                        <div className="space-y-4">
+                        <div className="space-y-1">
                             {/* Filter Section */}
                             <div>
-                                <h3 className="font-serif text-[#745e59] text-sm mb-2">𝒻𝒾𝓁𝓉𝑒𝓇</h3>
-                                <div className="flex flex-wrap gap-2">
+                                <h3 className="font-serif text-[#745e59] text-sm mb-2 text-center py-1">🪄𝒻𝒾𝓁𝓉𝑒𝓇⊹₊⟡⋆</h3>
+                                <div className="flex flex-wrap gap-2 justify-center py-1" >
                                         {FILTERS.map((filter) => (
                                         <Button
                                         key={filter.id}
@@ -369,14 +364,14 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 
                             {/* Color Section */}
                             <div>
-                                <h3 className="font-serif text-[#745e59] text-sm mb-2">𝒸𝑜𝓁𝑜𝓇</h3>
-                                <div className="flex flex-wrap gap-2">
+                                <h3 className="font-serif text-[#745e59] text-sm mb-2 text-center py-1">‧₊˚✩ 𝒸𝑜𝓁𝑜𝓇 ₊˚🫧⊹♡</h3>
+                                <div className="flex flex-wrap gap-2 justify-center">
                                     {BACKGROUND_COLORS.map((color) => (
                                         <button
                                             key={color.id}
                                             onClick={() => setBackgroundColor(color.value)}
                                             className={cn(
-                                                "w-6 h-6 rounded-full border-2 transition-all shadow-sm hover:scale-110",
+                                                "w-6 h-6 rounded-full border-2 transition-all shadow-sm hover:scale-110 py-1",
                                                 backgroundColor === color.value ? "border-[#745e59] scale-110 ring-2 ring-stone-100 ring-offset-2" : "border-stone-200 hover:border-stone-300"
                                             )}
                                             style={{ backgroundColor: color.value }}
@@ -388,7 +383,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 
                             {/* Note Section */}
                             <div>
-                                <h3 className="font-serif text-[#745e59] text-sm mb-2">𝓃𝑜𝓉𝑒</h3>
+                                <h3 className="font-serif text-[#745e59] text-sm mb-2 text-center py-1">𝓃𝑜𝓉𝑒 ✎𓂃</h3>
                                 <div className="flex justify-center">
                                     <input
                                         type="text"
@@ -405,10 +400,10 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                              <div className="pt-2 flex flex-col gap-2">
                                 <Button 
                                     onClick={handleSave} 
-                                    className="btn-minimal w-full py-4 text-base"
+                                    className="btn-minimal w-full py-5 text-base font-medium tracking-wide"
                                     disabled={isGenerating}
                                 >
-                                    {isGenerating ? "Processing..." : "‧₊˚ ☁️⋅ 𝓈𝒶𝓋𝑒 ♡"}
+                                    {isGenerating ? "Processing..." : "˚ ☁️⋅ 𝓅𝓇𝒾𝓃𝓉 & 𝓈𝒶𝓋𝑒 ♡‧₊"}
                                 </Button>
                             </div>
                         </div>
@@ -418,8 +413,8 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 <Button 
                     onClick={() => setShowSettings(!showSettings)}
                     className={cn(
-                        "w-14 h-14 rounded-full shadow-xl transition-all duration-300 z-50",
-                        showSettings ? "bg-[#745e59] text-white rotate-90" : "bg-white text-[#745e59] hover:bg-[#745e59]/10"
+                        "btn-minimal w-14 h-14 transition-all duration-300 z-50 flex items-center justify-center p-0",
+                        showSettings ? "btn-minimal-active rotate-90" : ""
                     )}
                 >
                     {showSettings ? <X className="w-6 h-6" /> : <SlidersHorizontal className="w-6 h-6" />}
@@ -434,7 +429,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             {/* Back Button (Top Left) */}
             <Button 
                 onClick={handleBackToSettings}
-                className="fixed top-6 left-6 z-50 w-14 h-14 rounded-full shadow-xl bg-white text-[#745e59] hover:bg-[#745e59]/10 transition-all duration-300 animate-in fade-in duration-1000 delay-[3000ms]"
+                className="btn-minimal fixed top-6 left-6 z-50 w-14 h-14 flex items-center justify-center p-0 animate-in fade-in duration-1000 delay-[3000ms]"
             >
                 <ArrowLeft className="w-6 h-6" />
             </Button>
@@ -442,7 +437,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             {/* Start New Session Button (Bottom Right) */}
             <Button 
                 onClick={onRetake}
-                className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl bg-white text-[#745e59] hover:bg-[#745e59]/10 transition-all duration-300 animate-in fade-in duration-1000 delay-[3000ms]"
+                className="btn-minimal fixed bottom-6 right-6 z-50 w-14 h-14 flex items-center justify-center p-0 animate-in fade-in duration-1000 delay-[3000ms]"
             >
                 <Home className="w-6 h-6" />
             </Button>

@@ -82,9 +82,8 @@ export function UploadScreen({ onUploadComplete, onCancel }: UploadScreenProps) 
         )}
 
         <Button 
-            variant="outline"
             onClick={onCancel}
-            className="font-serif border-stone-800 text-stone-900 min-w-[160px] mt-8"
+            className="btn-minimal font-serif min-w-[160px] mt-8 py-6 text-lg"
         >
             Cancel
         </Button>

@@ -166,10 +166,10 @@
   }
 
   .btn-minimal-active {
-    background-color: #745e59;
-    color: #f5f5f4;
+    background-color: #e6dbc6;
+    color: #745e59;
     border-radius: 9999px;
-    border: 2px solid #745e59;
+    border: 2px solid #e6dbc6;
   }
 
   .animate-print-slide {
