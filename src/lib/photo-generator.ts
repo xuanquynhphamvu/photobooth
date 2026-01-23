@@ -79,8 +79,28 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
     const x = padding + (col * (photoWidth + padding));
     const y = padding + (row * (photoHeight + padding));
     
-    // Draw white border/frame around photo
-    ctx.drawImage(img, x, y, photoWidth, photoHeight);
+    // Draw photo with object-cover (crop to fit)
+    const imgRatio = img.width / img.height;
+    const targetRatio = photoWidth / photoHeight;
+    
+    let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+
+    if (imgRatio > targetRatio) {
+      // Image is wider than target: Crop width
+      sHeight = img.height;
+      sWidth = img.height * targetRatio;
+      sx = (img.width - sWidth) / 2;
+      sy = 0;
+    } else {
+      // Image is taller than target: Crop height
+      sWidth = img.width;
+      sHeight = img.width / targetRatio;
+      sx = 0;
+      sy = (img.height - sHeight) / 2;
+    }
+
+    // Draw with cropping
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, photoWidth, photoHeight);
   });
 
   // Reset filter for text/branding

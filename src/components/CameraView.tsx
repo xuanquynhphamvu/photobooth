@@ -102,7 +102,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
         {/* Dynamic Aspect Ratio Container */}
         <div 
             className={cn(
-                "relative w-full bg-[#745e59] rounded-lg overflow-hidden shadow-2xl group mx-auto transition-all duration-500",
+                "relative w-full bg-[#745e59] rounded-lg overflow-hidden shadow-lg group mx-auto transition-all duration-500",
                 isPortrait ? "aspect-[3/4] max-w-[500px]" : "aspect-video"
             )}
         >
@@ -172,7 +172,7 @@ export const CameraView = forwardRef<CameraViewHandle, CameraViewProps>(
               >
                 (｡ •̀  ᵕ 📷) ✨
               </Button>
-              <p className="text-s text-stone-500 font-serif italic opacity-70">
+              <p className="text-s text-stone-500 font-serif italic opacity-70 text-center">
                 * 𝕥𝕒𝕜𝕖 𝟜 𝕡𝕚𝕔𝕤 𝕒𝕥 𝕠𝕟𝕔𝕖 𝕨𝕚𝕥𝕙 𝕒 𝟛-𝕤𝕖𝕔 𝕔𝕠𝕦𝕟𝕥𝕕𝕠𝕨𝕟 𝕗𝕠𝕣 𝕖𝕒𝕔𝕙
               </p>
             </>

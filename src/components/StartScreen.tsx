@@ -9,7 +9,7 @@ interface StartScreenProps {
 
 export function StartScreen({ onUseCamera, onUpload }: StartScreenProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80dvh] space-y-12 text-center p-8 max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-700">
+    <div className="flex flex-col items-center justify-center min-h-[80dvh] space-y-12 text-center p-8 w-full max-w-4xl animate-in fade-in zoom-in-95 duration-700">
       <div className="space-y-6">
         <img 
           src="/melphotobooth.svg" 
@@ -18,11 +18,11 @@ export function StartScreen({ onUseCamera, onUpload }: StartScreenProps) {
         />
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-6 w-full justify-center">
+      <div className="flex col-2 sm:flex-row gap-6 w-full justify-center items-center">
         <Button
           size="lg"
           onClick={onUseCamera}
-          className="btn-minimal text-3xl px-5 py-10 min-w-[240px] flex items-center justify-center"
+          className="btn-minimal text-xl px-3 py-8 min-w-[150px] max-w-[280px] flex items-center justify-center"
         >
           ˙✧˖°📸⋆｡ ˚
         </Button>
@@ -30,7 +30,7 @@ export function StartScreen({ onUseCamera, onUpload }: StartScreenProps) {
           size="lg"
           variant="ghost"
           onClick={onUpload}
-          className="btn-minimal text-3xl px-5 py-10 min-w-[240px] flex items-center justify-center"
+          className="btn-minimal text-xl px-3 py-8 min-w-[150px] max-w-[280px] flex items-center justify-center"
         >
           ˙✧˖°📂 ⋆｡˚
         </Button>

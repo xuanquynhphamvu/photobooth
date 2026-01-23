@@ -152,7 +152,7 @@
     border-radius: 9999px; /* full rounded */
     color: #745e59; /* primary/vintage brown */
     border: 2.5px solid #e6dbc6;
-    box-shadow: none;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* centered shadow */
     transition: all 0.2s ease-in-out;
   }
 
@@ -166,9 +166,18 @@
   }
 
   .btn-minimal-active {
-    background-color: #745e59;
-    color: #f5f5f4;
+    background-color: #e6dbc6;
+    color: #745e59;
     border-radius: 9999px;
-    border: 2px solid #745e59;
+    border: 2px solid #e6dbc6;
+  }
+
+  .animate-print-slide {
+    animation: print-slide 3s ease-in-out forwards;
+  }
+
+  @keyframes print-slide {
+    0% { transform: translateY(-110%); opacity: 1; }
+    100% { transform: translateY(0%); opacity: 1; }
   }
 }

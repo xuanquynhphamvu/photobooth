@@ -29,6 +29,7 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
   const [countdown, setCountdown] = useState(0);
   const photosCountRef = useRef(0);
   const isSessionActiveRef = useRef(false);
+  const isCapturingRef = useRef(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { playShutterSound } = useSound();
   
@@ -40,22 +41,35 @@ export function usePhotoSession({ captureFn, onFinish }: UsePhotoSessionProps = 
   };
 
   const capturePhoto = useCallback(async () => {
-    if (captureFn && isSessionActiveRef.current) {
+    if (captureFn && isSessionActiveRef.current && !isCapturingRef.current) {
+        isCapturingRef.current = true;
         setStatus('capturing');
         playShutterSound();
         try {
+            // Capture immediately to sync with countdown end & flash start
+            let photoResult: string | Blob | null = null;
+            if (isSessionActiveRef.current) {
+                photoResult = await captureFn();
+            }
+            
+            // Wait for flash animation (500ms) before proceeding
+            // This ensures the flash is visible and gives a consistent "shutter speed" feel
             await new Promise(resolve => setTimeout(resolve, 500));
             
-            if (!isSessionActiveRef.current) return;
+            if (!isSessionActiveRef.current) {
+                isCapturingRef.current = false;
+                return;
+            }
             
-            const photo = await captureFn();
-            if (photo && isSessionActiveRef.current) {
-                const photoUrl = typeof photo === 'string' ? photo : URL.createObjectURL(photo);
+            if (photoResult) {
+                const photoUrl = typeof photoResult === 'string' ? photoResult : URL.createObjectURL(photoResult);
                 setPhotos(prev => [...prev, photoUrl]);
                 photosCountRef.current += 1;
             }
         } catch (e) {
             console.error("Capture failed", e);
+        } finally {
+            isCapturingRef.current = false;
         }
     }
   }, [captureFn, playShutterSound]);
