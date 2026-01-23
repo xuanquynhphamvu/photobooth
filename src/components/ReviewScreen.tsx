@@ -43,9 +43,26 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   const [isPortrait, setIsPortrait] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
       setIsPortrait(window.matchMedia("(orientation: portrait)").matches);
-    }
+  }, []);
+  
+  // === UI SCALING FOR BUTTONS & PANEL ===
+  const [uiScale, setUiScale] = useState(1);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const calculateUiScale = () => {
+        // Base width for scaling: 1024px
+        // Below 1024px: Scale = 1 (Mobile/Tablet default)
+        // Above 1024px: Scale grows
+        const width = window.innerWidth;
+        const newScale = width < 1024 ? 1 : Math.max(1, width / 1024);
+        setUiScale(newScale);
+    };
+    
+    calculateUiScale();
+    window.addEventListener('resize', calculateUiScale);
+    return () => window.removeEventListener('resize', calculateUiScale);
   }, []);
   const [view, setView] = useState<'review' | 'printing'>('review');
   const [activeFilter, setActiveFilter] = useState<FilterType>('none');
@@ -353,12 +370,14 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             <Button 
                 onClick={onRetake}
                 className="btn-minimal fixed top-6 left-6 z-50 w-14 h-14 flex items-center justify-center p-0"
+                style={{ transform: `scale(${uiScale})`, transformOrigin: 'top left' }}
             >
                 <ArrowLeft className="w-6 h-6" />
             </Button>
             {/* Toggle Button */}
             <div 
                 className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2"
+                style={{ transform: `scale(${uiScale})`, transformOrigin: 'bottom right' }}
             >
                 <div 
                     className={cn(
@@ -477,6 +496,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             <Button 
                 onClick={handleBackToSettings}
                 className="btn-minimal fixed top-6 left-6 z-50 w-14 h-14 flex items-center justify-center p-0 animate-in fade-in duration-1000 delay-[3000ms]"
+                style={{ transform: `scale(${uiScale})`, transformOrigin: 'top left' }}
             >
                 <ArrowLeft className="w-6 h-6" />
             </Button>
@@ -485,6 +505,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
             <Button 
                 onClick={onRetake}
                 className="btn-minimal fixed bottom-6 right-6 z-50 w-14 h-14 flex items-center justify-center p-0 animate-in fade-in duration-1000 delay-[3000ms]"
+                style={{ transform: `scale(${uiScale})`, transformOrigin: 'bottom right' }}
             >
                 <Home className="w-6 h-6" />
             </Button>
