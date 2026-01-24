@@ -17,6 +17,14 @@ export function StartScreen({ onUseCamera, onUpload }: StartScreenProps) {
           className="h-32 w-auto object-contain mb-4" 
         />
       </div>
+
+      <div className="flex justify-center -mt-10">
+        <img 
+          src="/start-animation.gif" 
+          alt="Decorative Animation"
+          className="w-full max-w-[200px] sm:max-w-[300px] h-auto object-contain"
+        />
+      </div>
       
       <div className="flex col-2 sm:flex-row gap-6 w-full justify-center items-center">
         <Button

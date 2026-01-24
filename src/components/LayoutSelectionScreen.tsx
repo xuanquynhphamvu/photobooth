@@ -1,14 +1,25 @@
-import React from 'react';
 import { LayoutType } from "@/lib/photo-generator";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface LayoutSelectionScreenProps {
   onSelectLayout: (layout: LayoutType, isPortrait: boolean) => void;
+  onBack: () => void;
 }
 
-export function LayoutSelectionScreen({ onSelectLayout }: LayoutSelectionScreenProps) {
+export function LayoutSelectionScreen({ onSelectLayout, onBack }: LayoutSelectionScreenProps) {
   return (
-      <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-700">
+      <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 animate-in fade-in zoom-in-95 duration-700 relative">
         
+        {/* Floating Back Button */}
+        <Button 
+            onClick={onBack}
+            aria-label="Back"
+            className="btn-minimal fixed top-[clamp(1rem,3vh,1.5rem)] left-[clamp(1rem,3vw,1.5rem)] z-50 w-12 h-12 md:w-14 md:h-14 flex items-center justify-center p-0"
+        >
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
+        </Button>
+
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-4xl mx-auto">
           
           {/* Option 1: Portrait Strip */}

@@ -3,7 +3,7 @@ import { LAYOUT_CONFIG, getFormattedDate } from "./layout-config";
 export type LayoutType = 'grid' | 'strip';
 export type FilterType = 'none' | 'sepia' | 'bw' | 'vintage';
 
-export async function generateCompositeImage(photos: string[], filter: FilterType, backgroundColor: string = '#f5f5f4', layout: LayoutType = 'strip', note?: string, isPortrait: boolean = false): Promise<string> {
+export async function generateCompositeImage(photos: string[], filter: FilterType, backgroundColor: string = '#f5f5f4', layout: LayoutType = 'strip', note?: string, isPortrait: boolean = false, photoEdits?: Record<number, { zoom: number; pan: { x: number; y: number } }>): Promise<string> {
   if (photos.length === 0) throw new Error("No photos to generate image from");
 
   // Create a canvas
@@ -80,27 +80,48 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
     const x = padding + (col * (photoWidth + padding));
     const y = padding + (row * (photoHeight + padding));
     
-    // Draw photo (Always use object-cover logic for consistent cropping)
+    // Draw photo with Zoom and Pan
+    const edit = photoEdits?.[i] || { zoom: 1, pan: { x: 0, y: 0 } };
+    const { zoom, pan } = edit;
+
+    // 1. Calculate base "cover" dimensions
+    // This is the size the image would be to exactly cover the cell (like object-fit: cover)
     const imgRatio = img.width / img.height;
     const targetRatio = photoWidth / photoHeight;
     
-    let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+    let drawW, drawH;
 
     if (imgRatio > targetRatio) {
-      // Image is wider than target: Crop width
-      sHeight = img.height;
-      sWidth = img.height * targetRatio;
-      sx = (img.width - sWidth) / 2;
-      sy = 0;
+      // Image is wider: Height is constraint
+      drawH = photoHeight;
+      drawW = photoHeight * imgRatio;
     } else {
-      // Image is taller than target: Crop height
-      sWidth = img.width;
-      sHeight = img.width / targetRatio;
-      sx = 0;
-      sy = (img.height - sHeight) / 2;
+      // Image is taller: Width is constraint
+      drawW = photoWidth;
+      drawH = photoWidth / imgRatio;
     }
 
-    ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, photoWidth, photoHeight);
+    // 2. Apply Transforms
+    ctx.save();
+    
+    // Clip to the cell
+    ctx.beginPath();
+    ctx.rect(x, y, photoWidth, photoHeight);
+    ctx.clip();
+    
+    // Move to Center of Cell
+    ctx.translate(x + photoWidth / 2, y + photoHeight / 2);
+    
+    // Apply User Pan (Relative to cell dimensions)
+    ctx.translate(pan.x * photoWidth, pan.y * photoHeight);
+    
+    // Apply User Zoom
+    ctx.scale(zoom, zoom);
+    
+    // Draw Image Centered (offset by simple half-size)
+    ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+    
+    ctx.restore();
   });
 
   // Reset filter for text/branding

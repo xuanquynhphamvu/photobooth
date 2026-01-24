@@ -72,6 +72,15 @@ export default function Home() {
     setView('layout');
   };
 
+  const handleLayoutBack = () => {
+    if (isUploadSource) {
+      setView('upload');
+    } else {
+      resetSession();
+      handleUseCamera();
+    }
+  };
+
   const handleLayoutSelect = (layout: LayoutType, isPortrait: boolean) => {
     setSelectedLayout(layout);
     setIsPortraitSelection(isPortrait);
@@ -82,7 +91,7 @@ export default function Home() {
   useOverflowControl(mainRef);
 
   return (
-    <main ref={mainRef} className="min-h-[100dvh] p-4 flex flex-col items-center justify-center">
+    <main ref={mainRef} className="min-h-[100dvh] p-4 flex flex-col items-center justify-center bg-[#FCF7EF]">
       {view === 'start' && (
         <StartScreen onUseCamera={handleUseCamera} onUpload={handleUpload} />
       )}
@@ -113,7 +122,10 @@ export default function Home() {
       )}
 
       {view === 'layout' && (
-        <LayoutSelectionScreen onSelectLayout={handleLayoutSelect} />
+        <LayoutSelectionScreen 
+          onSelectLayout={handleLayoutSelect} 
+          onBack={handleLayoutBack}
+        />
       )}
 
       {view === 'review' && (

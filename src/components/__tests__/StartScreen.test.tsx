@@ -8,10 +8,9 @@ describe('StartScreen', () => {
     const onUpload = vi.fn()
     render(<StartScreen onUseCamera={onUseCamera} onUpload={onUpload} />)
 
-    expect(screen.getByText('Photobooth')).toBeInTheDocument()
-    expect(screen.getByText('Capture your moment in time')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /use camera/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /upload photos/i })).toBeInTheDocument()
+    expect(screen.getByAltText('Photobooth Logo')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: "˙✧˖°📸⋆｡ ˚" })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: "˙✧˖°📂 ⋆｡˚" })).toBeInTheDocument()
   })
 
   it('calls correct handlers when buttons are clicked', () => {
@@ -19,10 +18,10 @@ describe('StartScreen', () => {
     const onUpload = vi.fn()
     render(<StartScreen onUseCamera={onUseCamera} onUpload={onUpload} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /use camera/i }))
+    fireEvent.click(screen.getByRole('button', { name: "˙✧˖°📸⋆｡ ˚" }))
     expect(onUseCamera).toHaveBeenCalled()
 
-    fireEvent.click(screen.getByRole('button', { name: /upload photos/i }))
+    fireEvent.click(screen.getByRole('button', { name: "˙✧˖°📂 ⋆｡˚" }))
     expect(onUpload).toHaveBeenCalled()
   })
 })

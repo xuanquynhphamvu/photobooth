@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Home, SlidersHorizontal, X, Printer } from "lucide-react";
 import { LayoutType, generateCompositeImage } from "@/lib/photo-generator";
+import { DraggablePhoto } from "./DraggablePhoto";
 import { LAYOUT_CONFIG, getFormattedDate } from "@/lib/layout-config";
 
 import { useResponsiveContain } from "@/hooks/useResponsiveContain";
@@ -171,6 +172,18 @@ export function ReviewScreen({ photos, onRetake, onBack, onSave, initialLayout, 
   const [selectedPhotos] = useState<string[]>(photos.slice(0, defaultSelectionCount));
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // === EDITING STATE ===
+  type PhotoEdit = { zoom: number; pan: { x: number; y: number } };
+  const [photoEdits, setPhotoEdits] = useState<Record<number, PhotoEdit>>({});
+
+  const handleEditUpdate = (index: number, zoom: number, pan: { x: number; y: number }) => {
+    setPhotoEdits(prev => ({
+        ...prev,
+        [index]: { zoom, pan }
+    }));
+  };
+
+
 
 
   const filterClass = FILTERS.find(f => f.id === activeFilter)?.class || 'filter-none';
@@ -182,7 +195,7 @@ export function ReviewScreen({ photos, onRetake, onBack, onSave, initialLayout, 
     // Let's pass the calculated dimensions.
     
     try {
-        const dataUrl = await generateCompositeImage(selectedPhotos, activeFilter, backgroundColor, layout, note, baseDimensions.targetIsPortrait);
+        const dataUrl = await generateCompositeImage(selectedPhotos, activeFilter, backgroundColor, layout, note, baseDimensions.targetIsPortrait, photoEdits);
         
         const link = document.createElement('a');
         link.href = dataUrl;
@@ -297,27 +310,53 @@ export function ReviewScreen({ photos, onRetake, onBack, onSave, initialLayout, 
                 )}
                 style={{ gap: padding * scale }} // Generator uses padding as gap
             >
-                {selectedPhotos.map((photo, index) => (
-                    <div 
-                    key={index} 
-                    className={cn(
-                        "relative overflow-hidden bg-stone-100",
-                        // Only animate fade in on initial review, not re-render during print
-                        view === 'review' ? "animate-in fade-in zoom-in-95 duration-300 fill-mode-backwards" : "",
-                        baseDimensions.targetIsPortrait ? "aspect-[3/4]" : "aspect-[4/3]"
-                    )}
-                    style={{ 
-                        animationDelay: view === 'review' ? `${index * 50}ms` : '0ms',
-                        borderRadius: 4 * scale // Scale internal radius
-                    }}
-                    >
-                    <img 
-                        src={photo} 
-                        alt={`Selected Photo ${index + 1}`} 
-                        className={cn("w-full h-full object-cover transition-all duration-300", filterClass)} 
-                    />
-                    </div>
-                ))}
+                {selectedPhotos.map((photo, index) => {
+                    const edit = photoEdits[index] || { zoom: 1, pan: { x: 0, y: 0 } };
+                    
+                    if (view === 'review') {
+                        return (
+                            <DraggablePhoto
+                                key={index}
+                                src={photo}
+                                zoom={edit.zoom}
+                                pan={edit.pan}
+                                onUpdate={(z, p) => handleEditUpdate(index, z, p)}
+                                className={cn(
+                                    "bg-stone-100", // Removed relative/overflow here as component has it? Actually DraggablePhoto has relative/overflow.
+                                    "animate-in fade-in zoom-in-95 duration-300 fill-mode-backwards",
+                                    baseDimensions.targetIsPortrait ? "aspect-[3/4]" : "aspect-[4/3]"
+                                )}
+                                style={{
+                                    animationDelay: `${index * 50}ms`,
+                                    borderRadius: 4 * scale
+                                }}
+                            />
+                        );
+                    } else {
+                        // Printing View: Static Render
+                        return (
+                            <div 
+                                key={index} 
+                                className={cn(
+                                    "relative overflow-hidden bg-stone-100",
+                                    baseDimensions.targetIsPortrait ? "aspect-[3/4]" : "aspect-[4/3]"
+                                )}
+                                style={{ 
+                                    borderRadius: 4 * scale 
+                                }}
+                            >
+                                <img 
+                                    src={photo} 
+                                    alt={`Selected Photo ${index + 1}`} 
+                                    className={cn("absolute top-0 left-0 w-full h-full object-cover origin-center", filterClass)} 
+                                    style={{
+                                        transform: `translate(${edit.pan.x * 100}%, ${edit.pan.y * 100}%) scale(${edit.zoom})` 
+                                    }}
+                                />
+                            </div>
+                        );
+                    }
+                })}
             </div>
 
             {/* Footer Banner */}
