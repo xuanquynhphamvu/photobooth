@@ -40,7 +40,8 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
   // rows=2. `padding * 2` = 80. Correct (Top + Mid).
   
   // So `canvas.height = (photoHeight * rows) + (padding * rows) + bottomBannerHeight` is correct.
-  canvas.height = (photoHeight * rows) + (padding * rows) + bottomBannerHeight; 
+  // Add one extra padding for the bottom of the photo section (before banner)
+  canvas.height = (photoHeight * rows) + (padding * (rows + 1)) + bottomBannerHeight; 
 
   // Background
   ctx.fillStyle = backgroundColor;
@@ -79,7 +80,7 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
     const x = padding + (col * (photoWidth + padding));
     const y = padding + (row * (photoHeight + padding));
     
-    // Draw photo with object-cover (crop to fit)
+    // Draw photo (Always use object-cover logic for consistent cropping)
     const imgRatio = img.width / img.height;
     const targetRatio = photoWidth / photoHeight;
     
@@ -99,7 +100,6 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
       sy = (img.height - sHeight) / 2;
     }
 
-    // Draw with cropping
     ctx.drawImage(img, sx, sy, sWidth, sHeight, x, y, photoWidth, photoHeight);
   });
 
@@ -114,7 +114,8 @@ export async function generateCompositeImage(photos: string[], filter: FilterTyp
   
   const centerX = canvas.width / 2;
   // contentBottom matches the height calculation above (start of banner)
-  const contentBottom = (photoHeight * rows) + (padding * rows);
+  // contentBottom starts after the photos + all paddings (including the new bottom padding)
+  const contentBottom = (photoHeight * rows) + (padding * (rows + 1));
   
   // Dynamic Group Centering
   // We want to center the group [Logo + Gap + Date] vertically in the banner

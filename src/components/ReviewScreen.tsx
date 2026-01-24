@@ -13,8 +13,11 @@ import { useResponsiveContain } from "@/hooks/useResponsiveContain";
 interface ReviewScreenProps {
   photos: string[];
   onRetake: () => void;
+  onBack: () => void;
   onSave?: () => void;
   initialLayout: LayoutType;
+  isUpload?: boolean;
+  photoOrientation?: 'portrait' | 'landscape';
 }
 
 type FilterType = 'none' | 'sepia' | 'bw' | 'vintage';
@@ -39,7 +42,7 @@ const BACKGROUND_COLORS = [
 ];
 
 
-export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: ReviewScreenProps) {
+export function ReviewScreen({ photos, onRetake, onBack, onSave, initialLayout, isUpload = false, photoOrientation }: ReviewScreenProps) {
   const [isPortrait, setIsPortrait] = useState(false);
 
   useEffect(() => {
@@ -76,7 +79,17 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
   // Calculate Base Dimensions (Unscaled high-res pixels)
   // This mimics the structure of the generated image to preserve ratios
   const getBaseDimensions = () => {
-    const { width: pW, height: pH } = LAYOUT_CONFIG.getDimensions(isPortrait);
+    // If photoOrientation is provided (from Upload flow), use it to determine dimensions.
+    // Otherwise use default "isPortrait" (from Window orientation) -> Wait, original code used window orientation?
+    // "LAYOUT_CONFIG.getDimensions(isPortrait)" uses 480x640 vs 640x480.
+    // The "isPortrait" state acts as a default if photoOrientation isn't provided (Camera flow).
+    
+    // For Camera flow: isPortrait is set by window.matchMedia.
+    // For Upload flow: photoOrientation is passed.
+    
+    const targetIsPortrait = photoOrientation ? photoOrientation === 'portrait' : isPortrait;
+    
+    const { width: pW, height: pH } = LAYOUT_CONFIG.getDimensions(targetIsPortrait);
     const { padding, bottomBannerHeight } = LAYOUT_CONFIG;
     
     // Widths
@@ -95,9 +108,10 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
     // In Generator: padding (top) + photos + gap + banner...
     // In CSS: Padding is applied to the container.
     // Total Height = (padding * 2) + (rows * pH) + ((rows - 1) * padding) + bottomBannerHeight
-    const baseHeight = (padding * 2) + (rows * pH) + ((rows - 1) * padding) + bottomBannerHeight;
+    // UPDATE: We added one extra padding unit to bottom in generator.
+    const baseHeight = (padding * (rows + 1)) + (rows * pH) + ((rows - 1) * padding) + bottomBannerHeight;
     
-    return { width: baseWidth, height: baseHeight };
+    return { width: baseWidth, height: baseHeight, pW, pH, targetIsPortrait };
   };
 
   const baseDimensions = getBaseDimensions();
@@ -163,8 +177,12 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
 
   const downloadPhoto = async () => {
     setIsGenerating(true);
+    // Calcluate aspect ratio for "review" usage if needed, but generator needs raw dims?
+    // Generator takes "isPortrait" boolean OR we can pass explicit dimensions.
+    // Let's pass the calculated dimensions.
+    
     try {
-        const dataUrl = await generateCompositeImage(selectedPhotos, activeFilter, backgroundColor, layout, note, isPortrait);
+        const dataUrl = await generateCompositeImage(selectedPhotos, activeFilter, backgroundColor, layout, note, baseDimensions.targetIsPortrait);
         
         const link = document.createElement('a');
         link.href = dataUrl;
@@ -267,7 +285,8 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                 borderRadius: 12 * scale, // Optional: Scale border radius too
                 backgroundColor,
                 transformOrigin: 'top center',
-                transition: view === 'printing' ? 'none' : 'transform 0.5s'
+                transition: view === 'printing' ? 'none' : 'transform 0.5s',
+                gap: padding * scale // Match generator's bottom padding between grid and banner
             }}
             >
 
@@ -285,7 +304,7 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
                         "relative overflow-hidden bg-stone-100",
                         // Only animate fade in on initial review, not re-render during print
                         view === 'review' ? "animate-in fade-in zoom-in-95 duration-300 fill-mode-backwards" : "",
-                        isPortrait ? "aspect-[3/4]" : "aspect-[4/3]"
+                        baseDimensions.targetIsPortrait ? "aspect-[3/4]" : "aspect-[4/3]"
                     )}
                     style={{ 
                         animationDelay: view === 'review' ? `${index * 50}ms` : '0ms',
@@ -366,10 +385,10 @@ export function ReviewScreen({ photos, onRetake, onSave, initialLayout }: Review
       {/* Controls: SETTINGS PANEL BUTTON (Only in Review Mode) */}
       {view === 'review' && (
         <>
-            {/* Home / New Session Button (Top Left) */}
+            {/* Back Button (Top Left) */}
             <Button 
-                onClick={onRetake}
-                aria-label="Retake"
+                onClick={onBack}
+                aria-label="Back"
                 className="btn-minimal fixed top-6 left-6 z-50 w-14 h-14 flex items-center justify-center p-0"
                 style={{ transform: `scale(${uiScale})`, transformOrigin: 'top left' }}
             >

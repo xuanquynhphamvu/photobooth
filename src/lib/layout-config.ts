@@ -2,7 +2,7 @@ export const LAYOUT_CONFIG = {
   // Canvas Dimensions (High Resolution)
   photoWidth: 640,
   photoHeight: 480,
-  padding: 40,
+  padding: 15,
   bottomBannerHeight: 220,
   
   // Content Dimensions (on Canvas)

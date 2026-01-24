@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { useState, ChangeEvent } from "react";
 
 interface UploadScreenProps {
-  onUploadComplete: (photos: string[]) => void;
+  onUploadComplete: (photos: string[], aspectRatio?: number) => void;
   onCancel: () => void;
 }
 
@@ -44,7 +44,17 @@ export function UploadScreen({ onUploadComplete, onCancel }: UploadScreenProps) 
             // For MVP strict order might not matter, or we could sort by name.
             // Let's assume user selection order is roughly preserved or doesn't matter too much.
             if (newPhotos.length === 4) {
-                onUploadComplete(newPhotos);
+                // Calculate aspect ratio from the first photo
+                const img = new Image();
+                img.onload = () => {
+                    const ratio = img.width / img.height;
+                    onUploadComplete(newPhotos, ratio);
+                };
+                img.onerror = () => {
+                    // Fallback if image load fails for some reason, though file reader worked
+                    onUploadComplete(newPhotos); 
+                };
+                img.src = newPhotos[0];
             } else {
                  setError("Failed to load some images.");
             }
@@ -72,8 +82,8 @@ export function UploadScreen({ onUploadComplete, onCancel }: UploadScreenProps) 
 
       <div className="flex flex-col items-center space-y-[3vh] w-full">
         <label htmlFor="photo-upload" className="cursor-pointer group flex flex-col items-center gap-4 transition-transform hover:scale-[1.02] active:scale-[0.98]">
-            <div className="flex items-center justify-center w-[70vw] max-w-sm aspect-[2/1] border-2 border-dashed border-stone-400 rounded-lg bg-stone-50 group-hover:bg-stone-100 transition-colors relative overflow-hidden shadow-sm">
-                <span className="text-stone-600 font-serif text-[clamp(0.9rem,3vw,1.125rem)] z-10 p-2">🖱️: ̗̀➛ 𝕔𝕝𝕚𝕔𝕜 𝕥𝕠 𝕤𝕖𝕝𝕖𝕔𝕥</span>
+            <div className="flex items-center justify-center w-[70vw] max-w-sm aspect-[2/1] border-[2.5px] border-dashed border-[#e6dbc6] rounded-lg bg-transparent group-hover:bg-[#e6dbc6] transition-colors relative overflow-hidden shadow-sm">
+                <span className="text-[#745e59] font-serif text-[clamp(0.9rem,3vw,1.125rem)] z-10 p-2">🖱️: ̗̀➛ 𝕔𝕝𝕚𝕔𝕜 𝕥𝕠 𝕤𝕖𝕝𝕖𝕔𝕥</span>
             </div>
             <input 
                 id="photo-upload" 

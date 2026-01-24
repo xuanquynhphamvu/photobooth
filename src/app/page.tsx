@@ -14,6 +14,11 @@ import { useOverflowControl } from "@/hooks/useOverflowControl";
 export default function Home() {
   const [view, setView] = useState<'start' | 'camera' | 'review' | 'upload' | 'layout'>('start');
   const [selectedLayout, setSelectedLayout] = useState<LayoutType>('strip');
+  // Track if photos came from upload or camera
+  const [isUploadSource, setIsUploadSource] = useState(false);
+  // Track selected orientation from LayoutSelectionScreen
+  const [isPortraitSelection, setIsPortraitSelection] = useState(true);
+
   const { stream, error, isLoading, startCamera, stopCamera } = useCamera();
   const cameraRef = useRef<CameraViewHandle>(null);
 
@@ -29,6 +34,7 @@ export default function Home() {
   });
 
   const handleUseCamera = async () => {
+    setIsUploadSource(false);
     setView('camera');
     await startCamera();
   };
@@ -50,18 +56,25 @@ export default function Home() {
     // Save logic handled in ReviewScreen component now
     handleCloseCamera();
   };
+  
+  const handleBack = () => {
+    setView('layout');
+  };
 
   const handleUpload = () => {
+    setIsUploadSource(true);
     setView('upload');
   };
 
+  // No longer need aspect ratio from upload
   const handleUploadComplete = (uploadedPhotos: string[]) => {
     setPhotos(uploadedPhotos);
     setView('layout');
   };
 
-  const handleLayoutSelect = (layout: LayoutType) => {
+  const handleLayoutSelect = (layout: LayoutType, isPortrait: boolean) => {
     setSelectedLayout(layout);
+    setIsPortraitSelection(isPortrait);
     setView('review');
   };
 
@@ -107,8 +120,11 @@ export default function Home() {
         <ReviewScreen 
             photos={photos}
             onRetake={handleRetake}
+            onBack={handleBack}
             onSave={handleSave}
             initialLayout={selectedLayout}
+            isUpload={isUploadSource}
+            photoOrientation={isPortraitSelection ? 'portrait' : 'landscape'}
         />
       )}
     </main>
