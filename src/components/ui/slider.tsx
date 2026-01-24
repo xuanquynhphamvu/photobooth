@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
  * to avoid adding @radix-ui/react-slider dependency for now.
  */
 
-interface SliderProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface SliderProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value'> {
   value: number[];
   max?: number;
   min?: number;
