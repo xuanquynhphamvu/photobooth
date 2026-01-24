@@ -20,7 +20,7 @@ export function StartScreen({ onUseCamera, onUpload }: StartScreenProps) {
 
       <div className="flex justify-center -mt-10">
         <img 
-          src="/start-animation.gif" 
+          src="https://res.cloudinary.com/dspkr9fux/image/upload/v1769265819/IMG_1769_wtwdjb.gif" 
           alt="Decorative Animation"
           className="w-full max-w-[200px] sm:max-w-[300px] h-auto object-contain"
         />
