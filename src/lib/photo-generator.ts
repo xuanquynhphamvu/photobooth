@@ -34,6 +34,11 @@ function applyManualFilter(imageData: ImageData, type: FilterType) {
             let ng = (0.349 * r) + (0.686 * g) + (0.168 * b);
             let nb = (0.272 * r) + (0.534 * g) + (0.131 * b);
 
+            // Sepia 0.8 (Blend 80% Sepia, 20% Original)
+            nr = (r * 0.2) + (nr * 0.8);
+            ng = (g * 0.2) + (ng * 0.8);
+            nb = (b * 0.2) + (nb * 0.8);
+
             // Contrast 1.2
             nr = ((nr - 128) * 1.2) + 128;
             ng = ((ng - 128) * 1.2) + 128;
@@ -55,14 +60,19 @@ function applyManualFilter(imageData: ImageData, type: FilterType) {
             ng = (g * 0.6) + (ng * 0.4);
             nb = (b * 0.6) + (nb * 0.4);
 
-            // 2. Increase Saturation (approximate) - actually vintage usually means LESS saturation or warm tint.
-            // Let's just bump brightness and contrast slightly as per original filter
-            // contrast(0.9) brightness(1.1)
-            
+            // 2. Saturation 1.5
+            // Gray = 0.299R + 0.587G + 0.114B
+            const gray = (0.299 * nr) + (0.587 * ng) + (0.114 * nb);
+            nr = gray + (nr - gray) * 1.5;
+            ng = gray + (ng - gray) * 1.5;
+            nb = gray + (nb - gray) * 1.5;
+
+            // 3. Contrast 0.9
             nr = ((nr - 128) * 0.9) + 128;
             ng = ((ng - 128) * 0.9) + 128;
             nb = ((nb - 128) * 0.9) + 128;
             
+            // 4. Brightness 1.1
             nr = nr * 1.1;
             ng = ng * 1.1;
             nb = nb * 1.1;
